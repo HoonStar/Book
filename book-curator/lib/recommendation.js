@@ -59,7 +59,7 @@ export async function recommendFromKakao(input) {
     kakaoSearch(item.query, 10, {
       target: item.target,
       page: 1 + ((input.refresh + index) % 3),
-    }).then((books) => books.map((book, rank) => ({ book, tag: item.tag, rank: index * 20 + rank })))
+    }).then((books) => books.map((book, rank) => ({ book, tag: item.tag, queryIndex: index, rank })))
   ));
 
   const recentKeys = new Set(input.recentBooks.flatMap((book) => [book.id, book.isbn, normalize(book.title)]).filter(Boolean));
@@ -69,7 +69,7 @@ export async function recommendFromKakao(input) {
     if (result.status !== "fulfilled") continue;
     for (const candidate of result.value) {
       const { book } = candidate;
-      if (!book.isbn || recentKeys.has(book.id) || recentKeys.has(book.isbn) || recentKeys.has(normalize(book.title))) continue;
+      if (!book.isbn || !isReadableRecommendation(book) || recentKeys.has(book.id) || recentKeys.has(book.isbn) || recentKeys.has(normalize(book.title))) continue;
       if (seen.has(book.id)) continue;
       seen.add(book.id);
       candidates.push(candidate);
@@ -79,9 +79,20 @@ export async function recommendFromKakao(input) {
   candidates.sort((a, b) => {
     const qualityA = (a.book.cover ? 2 : 0) + (a.book.publisher ? 1 : 0);
     const qualityB = (b.book.cover ? 2 : 0) + (b.book.publisher ? 1 : 0);
-    return a.rank - b.rank || qualityB - qualityA;
+    return a.rank - b.rank || qualityB - qualityA || a.queryIndex - b.queryIndex;
   });
-  const picked = candidates.slice(0, 3);
+  const picked = [];
+  const usedTags = new Set();
+  for (const candidate of candidates) {
+    if (usedTags.has(candidate.tag)) continue;
+    picked.push(candidate);
+    usedTags.add(candidate.tag);
+    if (picked.length === 3) break;
+  }
+  for (const candidate of candidates) {
+    if (picked.length === 3) break;
+    if (!picked.includes(candidate)) picked.push(candidate);
+  }
   if (picked.length < 3) {
     throw new Error("카카오에서 조건에 맞는 도서를 충분히 찾지 못했어요. 장르나 기분을 바꿔 다시 시도해 주세요.");
   }
@@ -97,6 +108,7 @@ export async function recommendFromKakao(input) {
 }
 
 const normalize = (value) => String(value || "").toLowerCase().replace(/[\s·:\-–—()\[\]『』《》"']/g, "");
+const isReadableRecommendation = (book) => !/(문제집|수험서|중고생이\s*꼭\s*읽어야|필독서\s*\d*|단편소설\s*\d+|고전소설\s*\d+)/i.test(book.title);
 const clampNumber = (value, min, max, fallback) => {
   const number = Number.isFinite(Number(value)) ? Math.round(Number(value)) : fallback;
   return Math.max(min, Math.min(max, number));

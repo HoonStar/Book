@@ -85,6 +85,7 @@ const recommended = await call(recommend, "POST", { body: {
 } });
 ok(recommended.code === 200 && recommended.body.recommendations.length === 3, "카카오 기반 추천 3권 반환");
 ok(recommended.body.recommendations.every((book) => book.book_id.startsWith("kakao:") && servedIds.has(book.book_id)), "추천 전권이 카카오 응답에 존재");
+ok(new Set(recommended.body.recommendations.flatMap((book) => book.genres)).size >= 2, "장르·기분 검색 결과를 섞어 추천 다양성 유지");
 ok(recommended.body.recommendations.every((book) => book.race_ready && book.cover), "ISBN·표지가 있는 책으로 레이스 준비");
 
 const created = await call(room, "POST", { body: {
