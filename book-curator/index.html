@@ -22,6 +22,7 @@
     <button class="tab active" data-tab="reco" role="tab">추천</button>
     <button class="tab" data-tab="race" role="tab">레이스</button>
     <button class="tab" data-tab="shelf" role="tab">서재</button>
+    <button class="tab" data-tab="my" role="tab">나의 페이지</button>
   </nav>
 </header>
 
@@ -109,6 +110,96 @@
     <div id="noteList" class="notes"></div>
   </div>
 </section>
+
+<!-- ── 탭 4: 나의 페이지 ─────────────────────────────── -->
+<section id="tab-my" class="panel my-page" aria-label="나의 페이지">
+  <div class="my-hero">
+    <div>
+      <span class="eyebrow">MY READING JOURNEY</span>
+      <h2><span id="myHeroName">완독 탐험가</span>님의 독서 여정</h2>
+      <p id="myHeroBio">한 권씩, 나만의 속도로 읽어가고 있어요.</p>
+    </div>
+    <button id="profileEditBtn" class="ghost my-profile-btn" type="button">프로필 수정</button>
+  </div>
+
+  <nav class="my-subtabs" aria-label="나의 페이지 메뉴">
+    <button class="my-subtab active" data-my-view="quest" aria-current="page">도장깨기</button>
+    <button class="my-subtab" data-my-view="logs">독서 기록</button>
+    <button class="my-subtab" data-my-view="taste">취향 분석</button>
+    <button class="my-subtab" data-my-view="saved">AI 추천</button>
+    <i id="myTabIndicator" aria-hidden="true"></i>
+  </nav>
+
+  <div id="my-view-quest" class="my-view active">
+    <article class="my-card quest-card">
+      <div class="my-section-head">
+        <div><span class="eyebrow">MONTHLY QUEST</span><h3>이달의 스탬프 퀘스트</h3></div>
+        <strong id="questRatio">3 / 6권</strong>
+      </div>
+      <div id="questStamps" class="quest-stamps" aria-label="월간 완독 도장"></div>
+      <div class="quest-progress-copy"><span id="questMessage">절반을 넘어 잘 가고 있어요!</span><b id="questPercent">50%</b></div>
+      <div id="questProgress" class="my-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"><i></i></div>
+      <p id="questSubmessage" class="muted">3권 남았어요. 오늘 10분만 펼쳐볼까요?</p>
+      <div class="quest-actions">
+        <button id="goalDown" type="button" class="ghost">목표 줄이기</button>
+        <button id="goalUp" type="button" class="primary">목표 +1권</button>
+      </div>
+    </article>
+
+    <div class="my-stats-grid">
+      <article class="my-card mini-stat"><span>이번 달 완독</span><strong id="booksReadStat">3권</strong><small>꾸준히 쌓이는 중</small></article>
+      <article class="my-card mini-stat"><span>연속 독서</span><strong id="streakStat">12일</strong><small>최고 기록 18일</small></article>
+      <article class="my-card mini-stat"><span>가장 읽은 장르</span><strong>소설</strong><small>전체 기록의 42%</small></article>
+    </div>
+
+    <article class="my-card my-settings">
+      <div><h3>개인화 설정</h3><p class="muted">나에게 맞는 추천과 독서 리듬을 조절해요.</p></div>
+      <label class="toggle-row"><span>AI 개인화</span><button type="button" class="switch" data-setting="personalize" role="switch" aria-checked="true"><i></i></button></label>
+      <label class="toggle-row"><span>독서 리마인더</span><button type="button" class="switch" data-setting="reminder" role="switch" aria-checked="false"><i></i></button></label>
+    </article>
+  </div>
+
+  <div id="my-view-logs" class="my-view">
+    <article class="my-card log-composer">
+      <div class="my-section-head"><div><span class="eyebrow">READING LOG</span><h3>독서 기록 남기기</h3></div><span id="logCount" class="pill">3개의 기록</span></div>
+      <p class="muted">읽은 책을 한 권씩 차곡차곡 쌓아보세요.</p>
+      <form id="readingLogForm">
+        <label>날짜<input id="logDate" type="date" required /></label>
+        <label>제목<input id="logTitle" type="text" maxlength="80" placeholder="어떤 책을 읽었나요?" required /></label>
+        <label>상태<select id="logStatus"><option value="완독">완독</option><option value="읽는 중">읽는 중</option></select></label>
+        <label class="log-note-label">완독 후 나의 감상<textarea id="logNote" maxlength="500" placeholder="마음에 남은 장면이나 문장을 기록해 보세요." required></textarea><small id="logCharCount">0 / 500</small></label>
+        <button class="primary" type="submit">✓ 독서 기록 저장</button>
+      </form>
+    </article>
+    <div class="log-filters" role="group" aria-label="독서 기록 필터">
+      <button class="active" data-log-filter="전체">전체</button><button data-log-filter="완독">완독</button><button data-log-filter="읽는 중">읽는 중</button>
+    </div>
+    <div id="readingLogList" class="reading-log-list"></div>
+  </div>
+
+  <div id="my-view-taste" class="my-view">
+    <div class="taste-grid">
+      <article class="my-card taste-chart-card">
+        <span class="eyebrow">TASTE MAP</span><h3>취향 분석</h3>
+        <div class="taste-chart-wrap">
+          <div class="donut" role="img" aria-label="소설 42%, 과학 28%, 에세이 18%, 인문 12%"><span><b>115</b><small>읽고 싶은 책</small></span></div>
+          <div id="genreBars" class="genre-bars"></div>
+        </div>
+      </article>
+      <article class="my-card insight-card">
+        <span class="eyebrow">READING INSIGHT</span><h3>취향 분석 인사이트</h3>
+        <div id="insightBody"></div>
+        <button id="refreshInsight" class="ghost" type="button">인사이트 새로 분석하기</button>
+        <small id="insightTime" class="muted"></small>
+      </article>
+    </div>
+  </div>
+
+  <div id="my-view-saved" class="my-view">
+    <div class="my-section-head"><div><span class="eyebrow">SAVED FOR YOU</span><h3>저장한 AI 추천</h3></div><button id="showAllSaved" class="ghost small" type="button">전체 보기</button></div>
+    <div id="savedBookGrid" class="saved-book-grid"></div>
+  </div>
+</section>
 </main>
 
 <!-- 레이스 시작 모달 -->
@@ -125,6 +216,15 @@
 <!-- 퀴즈 모달 -->
 <dialog id="quizModal">
   <div id="quizBody"></div>
+</dialog>
+
+<dialog id="profileModal">
+  <form id="profileForm" method="dialog">
+    <h3>프로필 수정</h3>
+    <label>독서가 닉네임<input id="profileName" type="text" maxlength="20" required /></label>
+    <label>한 줄 소개<textarea id="profileBio" maxlength="100"></textarea></label>
+    <div class="modal-actions"><button type="button" class="ghost" id="profileCancel">취소</button><button type="submit" class="primary">저장</button></div>
+  </form>
 </dialog>
 
 <div id="toast" class="toast" hidden></div>

@@ -40,7 +40,9 @@ $$(".tab").forEach((b) => b.addEventListener("click", () => showTab(b.dataset.ta
 function showTab(name) {
   $$(".tab").forEach((b) => b.classList.toggle("active", b.dataset.tab === name));
   $$(".panel").forEach((p) => p.classList.toggle("active", p.id === `tab-${name}`));
+  document.body.classList.toggle("my-active", name === "my");
   if (name === "race" || name === "shelf") refreshRoom();
+  if (name === "my") requestAnimationFrame(updateMyIndicator);
 }
 
 // ── 추천 폼 구성 ────────────────────────────────────────────
@@ -344,3 +346,121 @@ function renderShelf(d) {
 
 // ── 초기화 ─────────────────────────────────────────────────
 if (state.roomCode) refreshRoom();
+
+// ── 나의 페이지 ────────────────────────────────────────────
+const MY_LOG_KEY = "nextbookReadingLogs";
+const MY_PROFILE_KEY = "nextbookProfile";
+const MY_SETTINGS_KEY = "nextbookSettings";
+const DEFAULT_LOGS = [
+  { id:"sample-3", date:"2026-08-19", title:"아몬드", status:"완독", note:"감정을 이해하는 방식이 사람마다 얼마나 다른지 오래 생각하게 된 책." },
+  { id:"sample-2", date:"2026-08-13", title:"코스모스", status:"읽는 중", note:"우주의 크기를 상상할수록 오늘의 고민이 조금 가벼워진다." },
+  { id:"sample-1", date:"2026-08-04", title:"불편한 편의점", status:"완독", note:"평범한 친절이 한 사람의 하루를 바꿀 수 있다는 따뜻한 이야기." },
+];
+const MY_BOOKS = [
+  { title:"삼체", author:"류츠신", tags:["과학","몰입"], saved:true },
+  { title:"물고기는 존재하지 않는다", author:"룰루 밀러", tags:["과학","에세이"], saved:true },
+  { title:"숨결이 바람 될 때", author:"폴 칼라니티", tags:["에세이","감동"], saved:true },
+  { title:"우리가 빛의 속도로 갈 수 없다면", author:"김초엽", tags:["소설","사유"], saved:true },
+];
+const TASTE = [
+  { name:"소설", pct:42, color:"#3F8DA6" }, { name:"과학", pct:28, color:"#8CDAFF" },
+  { name:"에세이", pct:18, color:"#9273AE" }, { name:"인문", pct:12, color:"#D5C6A8" },
+];
+const INSIGHTS = [
+  ["요즘의 취향","낯선 세계를 탐험하는 소설과 과학 이야기에 자주 손이 가요."],["집중 시간","저녁 20~30분 독서가 가장 꾸준하게 이어지고 있어요."],["다음 탐색 장르","과학적 상상력이 담긴 한국 SF를 한 권 더 만나보세요."],
+  ["요즘의 취향","따뜻한 인물 서사와 생각할 거리를 함께 주는 책을 좋아해요."],["집중 시간","짧게라도 연속해서 읽을 때 완독 가능성이 높아져요."],["다음 탐색 장르","철학 에세이로 취향의 경계를 가볍게 넓혀보세요."],
+];
+
+const readStored = (key, fallback) => {
+  try { const value = JSON.parse(localStorage.getItem(key)); return value ?? fallback; }
+  catch { return fallback; }
+};
+const writeStored = (key, value) => {
+  try { localStorage.setItem(key, JSON.stringify(value)); return true; }
+  catch { toast("브라우저 저장 공간을 사용할 수 없어 현재 화면에만 유지돼요."); return false; }
+};
+const myState = {
+  goal: Math.max(3, Math.min(20, Number(localStorage.nextbookMonthlyGoal) || 6)),
+  logs: readStored(MY_LOG_KEY, []), logFilter:"전체", insightIndex:0,
+  profile: readStored(MY_PROFILE_KEY, { name:"완독 탐험가", bio:"한 권씩, 나만의 속도로 읽어가고 있어요.", streak:12 }),
+  settings: readStored(MY_SETTINGS_KEY, { personalize:true, reminder:false }),
+  books: readStored("nextbookSavedBooks", MY_BOOKS),
+};
+
+function allLogs() { return [...myState.logs, ...DEFAULT_LOGS].sort((a,b) => String(b.date).localeCompare(String(a.date))); }
+function completedBooks() { return Math.max(3, allLogs().filter((x) => x.status === "완독" && !String(x.id).startsWith("sample-")).length); }
+
+function updateMyIndicator() {
+  const nav = $(".my-subtabs"), active = $(".my-subtab.active"), bar = $("#myTabIndicator");
+  if (!nav || !active || !bar) return;
+  bar.style.left = `${active.offsetLeft}px`; bar.style.width = `${active.offsetWidth}px`;
+}
+function showMyView(name) {
+  $$(".my-subtab").forEach((b) => {
+    const active = b.dataset.myView === name; b.classList.toggle("active", active);
+    active ? b.setAttribute("aria-current","page") : b.removeAttribute("aria-current");
+  });
+  $$(".my-view").forEach((v) => v.classList.toggle("active", v.id === `my-view-${name}`));
+  updateMyIndicator();
+  if (name === "logs") setTimeout(() => $("#logDate")?.focus(), 80);
+}
+$$('.my-subtab').forEach((b) => b.onclick = () => showMyView(b.dataset.myView));
+window.addEventListener("resize", updateMyIndicator);
+
+function renderQuest() {
+  const done = Math.min(completedBooks(), myState.goal), pct = Math.round(done / myState.goal * 100), left = myState.goal - done;
+  $("#questStamps").innerHTML = Array.from({length:myState.goal}, (_,i) => {
+    const hit = i < done, goal = i === myState.goal - 1;
+    return `<span class="quest-stamp ${hit ? "done" : ""} ${goal ? "goal" : ""}"><i>${hit ? "✓" : goal ? "목표" : "🔒"}</i><span>${i+1}권</span></span>`;
+  }).join("");
+  const complete = left === 0;
+  let message = complete ? "🏆 목표를 모두 채웠어요!" : left === 1 ? "마지막 한 권만 남았어요!" : pct >= 50 ? "절반을 넘어 잘 가고 있어요!" : "첫 도장들이 멋지게 쌓이고 있어요!";
+  $("#questRatio").textContent = `${done} / ${myState.goal}권`; $("#questPercent").textContent = `${pct}%`; $("#questMessage").textContent = message;
+  $("#questSubmessage").textContent = complete ? "이번 달의 멋진 독서 여정을 완성했어요." : `${left}권 남았어요. 오늘 10분만 펼쳐볼까요?`;
+  $("#questProgress i").style.width = `${pct}%`; $("#questProgress").setAttribute("aria-valuenow", pct);
+  $(".quest-card").classList.toggle("complete", complete); $("#booksReadStat").textContent = `${done}권`;
+  $("#goalDown").disabled = myState.goal <= done; $("#goalUp").disabled = myState.goal >= 20;
+}
+$("#goalDown").onclick = () => { const done = completedBooks(); if (myState.goal > done) { myState.goal--; localStorage.nextbookMonthlyGoal=myState.goal; renderQuest(); } };
+$("#goalUp").onclick = () => { if (myState.goal < 20) { myState.goal++; localStorage.nextbookMonthlyGoal=myState.goal; renderQuest(); } };
+
+function renderLogs() {
+  const logs = allLogs(), visible = myState.logFilter === "전체" ? logs : logs.filter((x) => x.status === myState.logFilter);
+  $("#logCount").textContent = `${logs.length}개의 기록`;
+  $("#readingLogList").innerHTML = visible.length ? visible.map((x) => `<article class="my-card reading-log"><time datetime="${esc(x.date)}">${esc(x.date.replaceAll("-","."))}</time><div><h4>${esc(x.title)}</h4><p>${esc(x.note)}</p></div><span class="status-chip ${x.status === "읽는 중" ? "reading" : ""}">${esc(x.status)}</span></article>`).join("") : `<div class="empty-card"><p>이 조건에 맞는 기록이 아직 없어요.</p></div>`;
+}
+$("#logDate").value = new Date().toISOString().slice(0,10);
+$("#logNote").oninput = (e) => $("#logCharCount").textContent = `${e.target.value.length} / 500`;
+$("#readingLogForm").onsubmit = (e) => {
+  e.preventDefault(); const date=$("#logDate").value, title=$("#logTitle").value.trim(), note=$("#logNote").value.trim(), status=$("#logStatus").value;
+  if (!date || !title || !note) return toast("날짜, 제목, 감상을 모두 입력해 주세요.");
+  myState.logs.unshift({id:crypto.randomUUID(),date,title,note,status}); writeStored(MY_LOG_KEY,myState.logs);
+  e.target.reset(); $("#logDate").value=new Date().toISOString().slice(0,10); $("#logCharCount").textContent="0 / 500";
+  myState.logFilter="전체"; $$("[data-log-filter]").forEach((b)=>b.classList.toggle("active",b.dataset.logFilter==="전체")); renderLogs(); renderQuest(); toast("독서 기록을 저장했어요.");
+};
+$$('[data-log-filter]').forEach((b) => b.onclick = () => { myState.logFilter=b.dataset.logFilter; $$('[data-log-filter]').forEach((x)=>x.classList.toggle("active",x===b)); renderLogs(); });
+
+function renderTaste() {
+  $("#genreBars").innerHTML = TASTE.map((g) => `<div><div class="genre-bar-head"><span>${g.name}</span><b>${g.pct}%</b></div><div class="genre-bar-track"><i style="width:${g.pct}%;background:${g.color}"></i></div></div>`).join("");
+  const set = INSIGHTS[myState.insightIndex];
+  $("#insightBody").innerHTML = `<div class="insight-list">${set.map((x)=>`<div class="insight-item"><b>${x[0]}</b><span>${x[1]}</span></div>`).join("")}</div>`;
+  $("#insightTime").textContent = `마지막 분석 · ${new Date().toLocaleString("ko-KR",{month:"long",day:"numeric",hour:"2-digit",minute:"2-digit"})}`;
+}
+$("#refreshInsight").onclick = () => { myState.insightIndex=(myState.insightIndex+1)%INSIGHTS.length; renderTaste(); toast("새 독서 기록을 반영해 인사이트를 갱신했어요."); };
+
+function renderSavedBooks() {
+  $("#savedBookGrid").innerHTML = myState.books.map((b,i)=>`<article class="my-card saved-book" ${!b.saved ? 'hidden' : ''}><button class="save-toggle" data-save-index="${i}" type="button" aria-label="${esc(b.title)} 저장 해제">♥</button><div class="book-cover-art">${esc(b.title)}</div><h4>${esc(b.title)}</h4><p class="author">${esc(b.author)}</p><div class="book-tags">${b.tags.map((t)=>`<span>${esc(t)}</span>`).join("")}</div></article>`).join("");
+  $$('[data-save-index]').forEach((btn)=>btn.onclick=()=>{ myState.books[+btn.dataset.saveIndex].saved=false; writeStored("nextbookSavedBooks",myState.books); renderSavedBooks(); toast("저장한 추천에서 제외했어요."); });
+}
+$("#showAllSaved").onclick = () => { showTab("reco"); window.scrollTo({top:0,behavior:"smooth"}); };
+
+function renderProfile() {
+  $("#myHeroName").textContent=myState.profile.name; $("#myHeroBio").textContent=myState.profile.bio; $("#streakStat").textContent=`${myState.profile.streak || 12}일`;
+  $$('[data-setting]').forEach((b)=>b.setAttribute("aria-checked", String(Boolean(myState.settings[b.dataset.setting]))));
+}
+$("#profileEditBtn").onclick=()=>{ $("#profileName").value=myState.profile.name; $("#profileBio").value=myState.profile.bio; $("#profileModal").showModal(); };
+$("#profileCancel").onclick=()=>$("#profileModal").close();
+$("#profileForm").onsubmit=(e)=>{ e.preventDefault(); myState.profile={...myState.profile,name:$("#profileName").value.trim(),bio:$("#profileBio").value.trim()}; writeStored(MY_PROFILE_KEY,myState.profile); renderProfile(); $("#profileModal").close(); toast("프로필을 저장했어요."); };
+$$('[data-setting]').forEach((b)=>b.onclick=()=>{ const k=b.dataset.setting; myState.settings[k]=!myState.settings[k]; b.setAttribute("aria-checked",String(myState.settings[k])); writeStored(MY_SETTINGS_KEY,myState.settings); });
+
+renderQuest(); renderLogs(); renderTaste(); renderSavedBooks(); renderProfile(); updateMyIndicator();

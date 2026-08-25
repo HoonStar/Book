@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Melody AI - Recommendations</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "inverse-surface": "#e5e2e1",
+                      "on-tertiary-fixed-variant": "#4f00d0",
+                      "on-secondary-fixed-variant": "#004299",
+                      "primary-fixed": "#ffdad4",
+                      "primary-container": "#ff5540",
+                      "outline-variant": "#603e39",
+                      "primary-fixed-dim": "#ffb4a8",
+                      "surface": "#131313",
+                      "secondary-fixed": "#d9e2ff",
+                      "surface-container-highest": "#353534",
+                      "surface-charcoal": "#1A1A1A",
+                      "surface-variant": "#353534",
+                      "on-tertiary-container": "#2f0084",
+                      "on-error": "#690005",
+                      "surface-container-high": "#2a2a2a",
+                      "on-primary": "#690100",
+                      "surface-container-lowest": "#0e0e0e",
+                      "on-secondary": "#002d6d",
+                      "background": "#131313",
+                      "on-secondary-fixed": "#001944",
+                      "active-gradient": "linear-gradient(135deg, #FF0000 0%, #7C4DFF 100%)",
+                      "error": "#ffb4ab",
+                      "on-error-container": "#ffdad6",
+                      "secondary-fixed-dim": "#afc6ff",
+                      "outline": "#b18780",
+                      "secondary-container": "#005dd2",
+                      "tertiary-fixed": "#e8deff",
+                      "secondary": "#afc6ff",
+                      "tertiary-fixed-dim": "#cdbdff",
+                      "error-container": "#93000a",
+                      "on-tertiary": "#370096",
+                      "primary": "#ffb4a8",
+                      "tertiary-container": "#9a7bff",
+                      "inverse-primary": "#c00100",
+                      "surface-container-low": "#1c1b1b",
+                      "glass-border": "rgba(255, 255, 255, 0.08)",
+                      "on-secondary-container": "#d6e0ff",
+                      "on-surface-variant": "#ebbbb4",
+                      "on-primary-container": "#5c0000",
+                      "surface-container": "#201f1f",
+                      "inverse-on-surface": "#313030",
+                      "on-background": "#e5e2e1",
+                      "surface-dim": "#131313",
+                      "tertiary": "#cdbdff",
+                      "on-primary-fixed": "#410000",
+                      "surface-tint": "#ffb4a8",
+                      "surface-bright": "#3a3939",
+                      "on-primary-fixed-variant": "#930100",
+                      "on-surface": "#e5e2e1",
+                      "on-tertiary-fixed": "#20005f"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-lg": "48px",
+                      "stack-sm": "8px",
+                      "gutter": "16px",
+                      "unit": "4px",
+                      "margin-desktop": "48px",
+                      "margin-mobile": "16px",
+                      "stack-md": "24px"
+              },
+              "fontFamily": {
+                      "display-lg": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "display-lg-mobile": ["Inter"],
+                      "headline-sm": ["Inter"],
+                      "body-md": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "label-caps": ["Inter"]
+              },
+              "fontSize": {
+                      "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                      "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                      "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                      "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                      "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                      "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                      "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "500" }],
+                      "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+        .rim-light {
+            border: 1px solid theme('colors.glass-border');
+        }
+        .rim-light:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+        .active-btn {
+            background: theme('colors.active-gradient');
+            color: white;
+            border: none;
+        }
+        /* Custom Scrollbar for better UI */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: theme('colors.surface-container-highest'); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: theme('colors.surface-variant'); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col md:flex-row antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- SideNavBar (Desktop) -->
+<nav class="hidden md:flex flex-col h-full w-64 fixed left-0 top-0 bg-surface-charcoal border-r border-glass-border py-stack-md z-40">
+<div class="px-6 mb-stack-md">
+<h1 class="font-display-lg text-display-lg text-primary tracking-tighter">Melody AI</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-unit">AI-Powered Rhythm</p>
+</div>
+<div class="flex flex-col gap-unit flex-grow">
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-variant px-6 py-3 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-body-md text-body-md">Home</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-variant px-6 py-3 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+<span class="font-body-md text-body-md">Mood Lab</span>
+</a>
+<a class="flex items-center gap-3 bg-surface-container-high text-on-surface border-l-4 border-primary px-6 py-3 translate-x-1 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="tempest" style="font-variation-settings: 'FILL' 1;">qr_code_2</span>
+<span class="font-body-md text-body-md font-medium">Recommendations</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-variant px-6 py-3 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-body-md text-body-md">History</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-variant px-6 py-3 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</div>
+<div class="px-6 mt-auto">
+<button class="w-full active-btn rounded-full py-3 font-label-caps text-label-caps shadow-lg hover:opacity-90 transition-opacity">Upgrade to Pro</button>
+</div>
+</nav>
+<!-- TopNavBar (Desktop) -->
+<header class="hidden md:flex justify-between items-center px-margin-desktop py-4 w-full fixed top-0 left-64 w-[calc(100%-16rem)] z-50 bg-surface/80 backdrop-blur-xl border-b border-glass-border">
+<div class="flex items-center gap-6">
+<span class="font-display-lg text-display-lg text-primary tracking-tighter invisible">Melody AI</span> <!-- Spacer to align with side nav visually if needed, but side nav handles logo -->
+<nav class="flex gap-6">
+<a class="text-on-surface-variant font-medium font-headline-sm text-headline-sm hover:text-on-surface transition-colors duration-200" href="#">Discover</a>
+<a class="text-on-surface-variant font-medium font-headline-sm text-headline-sm hover:text-on-surface transition-colors duration-200" href="#">Library</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-headline-sm text-headline-sm" href="#">Moods</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-10 h-10 rounded-full rim-light overflow-hidden bg-surface-variant">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="A cinematic portrait of an imaginary user profile in dark mode aesthetic. Soft neon purple rim light on the subject's face against a deep charcoal background. High end photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzQaoSXzndZSdvPBj6inFvRdmI-CZavOisEB9d9Uqz7K5uL3bI81Rq6HoGn58Hp7AgWCyJ5yJ6D-eS1QDIDAahmTk5JFF0wq2Wu1De69dkIBwPzXDcxW_3H5myGUHKLUMSayTwkwldGdZiXJNEK--qs0DXqRlbPOXW2pabRqzCep4qJ5q-ET9Ryn80bsqFfsAgoGi1766xW7p5bD0JyEueXxD7qCVZg_tBCIqKysDoJptJnWtc0eoE"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full md:pl-64 pt-4 md:pt-24 pb-20 md:pb-8 px-margin-mobile md:px-margin-desktop min-h-screen relative overflow-hidden">
+<!-- Ambient Background Glow -->
+<div class="absolute top-[-20%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-primary-container opacity-5 blur-[120px] pointer-events-none"></div>
+<div class="absolute bottom-[-20%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-tertiary-container opacity-5 blur-[100px] pointer-events-none"></div>
+<!-- Header Section -->
+<div class="max-w-4xl mx-auto mb-stack-lg relative z-10 pt-stack-md md:pt-0">
+<div class="flex flex-col gap-stack-sm">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-variant/50 rim-light w-max">
+<span class="material-symbols-outlined text-primary text-[16px]" data-icon="tempest">qr_code_2</span>
+<span class="font-label-caps text-label-caps text-primary tracking-widest uppercase">Your Sonic Profile</span>
+</div>
+<h2 class="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg text-on-surface">Echoes of Midnight City</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+                    Based on your recent deep-focus sessions, we've curated a blend of atmospheric synthwave and downtempo electronic beats perfect for late-night coding or introspective drives.
+                </p>
+</div>
+<!-- Actions -->
+<div class="flex flex-wrap gap-4 mt-stack-md">
+<button class="active-btn px-6 py-3 rounded-full font-headline-sm text-headline-sm-mobile md:text-headline-sm flex items-center gap-2 shadow-[0_0_15px_rgba(255,0,0,0.3)] hover:scale-105 transition-transform">
+<span class="material-symbols-outlined" data-icon="play_arrow">play_arrow</span>
+                    Play All
+                </button>
+<button class="bg-surface-container-high hover:bg-surface-variant rim-light text-on-surface px-6 py-3 rounded-full font-headline-sm text-headline-sm-mobile md:text-headline-sm flex items-center gap-2 transition-colors">
+<span class="material-symbols-outlined" data-icon="refresh">refresh</span>
+                    Re-recommend
+                </button>
+<button class="bg-transparent hover:bg-surface-variant rim-light text-on-surface-variant px-6 py-3 rounded-full font-headline-sm text-headline-sm-mobile md:text-headline-sm flex items-center gap-2 transition-colors">
+<span class="material-symbols-outlined" data-icon="tune">tune</span>
+                    Restart Survey
+                </button>
+</div>
+</div>
+<!-- Recommendation List -->
+<div class="max-w-4xl mx-auto flex flex-col gap-stack-md relative z-10">
+<!-- Card 1 -->
+<article class="group bg-surface-charcoal rim-light rounded-xl p-4 md:p-6 flex flex-col md:flex-row gap-6 hover:bg-surface-container-highest/80 transition-all duration-300 relative overflow-hidden backdrop-blur-md">
+<div class="absolute top-0 left-0 w-1 h-full bg-active-gradient opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex items-start md:items-center gap-4 md:w-1/3 shrink-0">
+<span class="font-display-lg text-display-lg text-surface-variant font-bold w-12 text-center select-none group-hover:text-primary-container transition-colors">01</span>
+<div class="w-24 h-24 rounded-lg overflow-hidden relative shadow-lg shrink-0">
+<img alt="Album art" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A square album cover featuring a moody, cinematic midnight cityscape. Neon pink and purple lights reflecting on wet asphalt. High end digital art style, minimalistic typography overlay." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDP9O2K6Q6u7f2-9UysmbFHEN2Ur795epofa0cn-O6doN69zm3DReyPusm1Jmjf2-9ZWP9f7Mk2X6Cod2bf6YOkXVdUIAaJc9i71Ek4FQj5IOGcNk-1op84ndmcdyGuHjj5__Z-k0jgn413C3X6c1iPkTNDSQ6-soSDW55zIJzyr75q9GMbLGZzl6svHaUAV-FG_F2I2d9N-wm1_AQSImCNIAf_Hs9bldJ-RJbwf23Mv-2Cfz0ZJY3x"/>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+<span class="material-symbols-outlined text-white text-3xl" data-icon="play_circle" style="font-variation-settings: 'FILL' 1;">play_circle</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col justify-center flex-grow">
+<div class="flex justify-between items-start mb-unit">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Neon Genesis</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Starlight Drivers</p>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors opacity-0 group-hover:opacity-100 p-2" title="Copy Info">
+<span class="material-symbols-outlined text-[20px]" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+<p class="font-body-sm text-[13px] leading-relaxed text-on-surface-variant/80 mt-stack-sm border-l-2 border-surface-variant pl-3 italic">
+                        "Its driving bassline and atmospheric synths perfectly match the high-energy yet focused mood of your recent listens."
+                    </p>
+<div class="flex flex-wrap gap-2 mt-stack-sm">
+<span class="px-3 py-1 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm rim-light">Synthwave</span>
+<span class="px-3 py-1 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm rim-light">Driving</span>
+<span class="px-3 py-1 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm rim-light">120 BPM</span>
+</div>
+</div>
+</article>
+<!-- Card 2 -->
+<article class="group bg-surface-charcoal rim-light rounded-xl p-4 md:p-6 flex flex-col md:flex-row gap-6 hover:bg-surface-container-highest/80 transition-all duration-300 relative overflow-hidden backdrop-blur-md">
+<div class="flex items-start md:items-center gap-4 md:w-1/3 shrink-0">
+<span class="font-display-lg text-display-lg text-surface-variant font-bold w-12 text-center select-none group-hover:text-primary-container transition-colors">02</span>
+<div class="w-24 h-24 rounded-lg overflow-hidden relative shadow-lg shrink-0">
+<img alt="Album art" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A square album cover featuring an abstract, blurry glowing orb in shades of deep indigo and magenta against a pitch black background. Minimalist cinematic design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxycJ_1W6-zAj_j5PtVQETB769rBqarV7A91H7NlBVO3cQWAgebdfdy0b7bs95IfTX22HcWwGd_ru3zx956_WrWitcU2gzjQqycR6dFC2_bRj0IBNYLnpwUjuql4PEDciZyQU8tMbZDwB-jf-spkxm-VsB_QlgH1loapMJIzWS4KnOkqsButiD0LuNRM5NvT1S6YvqZaMAdd6fxsyOWSDfg9MYMKVtXK963AF6qqvgFCNyYTxjiV9x"/>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+<span class="material-symbols-outlined text-white text-3xl" data-icon="play_circle" style="font-variation-settings: 'FILL' 1;">play_circle</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col justify-center flex-grow">
+<div class="flex justify-between items-start mb-unit">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Digital Dawn</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Kavinsky &amp; Co.</p>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors opacity-0 group-hover:opacity-100 p-2" title="Copy Info">
+<span class="material-symbols-outlined text-[20px]" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+<p class="font-body-sm text-[13px] leading-relaxed text-on-surface-variant/80 mt-stack-sm border-l-2 border-surface-variant pl-3 italic">
+                        "Selected for its complex polyrhythms and slow build, mirroring your preference for evolving soundscapes."
+                    </p>
+<div class="flex flex-wrap gap-2 mt-stack-sm">
+<span class="px-3 py-1 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm rim-light">Electronic</span>
+<span class="px-3 py-1 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm rim-light">Ambient</span>
+</div>
+</div>
+</article>
+<!-- Card 3 -->
+<article class="group bg-surface-charcoal rim-light rounded-xl p-4 md:p-6 flex flex-col md:flex-row gap-6 hover:bg-surface-container-highest/80 transition-all duration-300 relative overflow-hidden backdrop-blur-md">
+<div class="flex items-start md:items-center gap-4 md:w-1/3 shrink-0">
+<span class="font-display-lg text-display-lg text-surface-variant font-bold w-12 text-center select-none group-hover:text-primary-container transition-colors">03</span>
+<div class="w-24 h-24 rounded-lg overflow-hidden relative shadow-lg shrink-0">
+<img alt="Album art" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A square album cover showing a silhouette of a solitary figure standing before a massive glowing monolith in a dark desert. Cinematic sci-fi aesthetic, high contrast." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHk_RRfRLwNNPcyWVQcJbzNeZir_SCtbmkoqVmJxKoei_8wCZn2vsP5Bo7DwknpTKoNrElGzn87mCPwyZ59V84j6YmTUYNpmifnCMwOQ3IgvThegnNDoq4Cs5R7TnXlvA60eDK7g07njhPFkxuB4JLBHiW1LptlXGPV6kAY-qCQvJHGMBp5ZWU0Rrlm79oC8pbB3oBEXidcNnv6GKtZJKJWOhfmKLZVOcp54goS6RBGbepnGksWl2j"/>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+<span class="material-symbols-outlined text-white text-3xl" data-icon="play_circle" style="font-variation-settings: 'FILL' 1;">play_circle</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col justify-center flex-grow">
+<div class="flex justify-between items-start mb-unit">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Void Walker</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">The Midnight</p>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors opacity-0 group-hover:opacity-100 p-2" title="Copy Info">
+<span class="material-symbols-outlined text-[20px]" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+<p class="font-body-sm text-[13px] leading-relaxed text-on-surface-variant/80 mt-stack-sm border-l-2 border-surface-variant pl-3 italic">
+                        "A melancholic yet powerful vocal performance that echoes the emotional resonance found in your 'Favorites' playlist."
+                    </p>
+<div class="flex flex-wrap gap-2 mt-stack-sm">
+<span class="px-3 py-1 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm rim-light">Retrowave</span>
+<span class="px-3 py-1 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm rim-light">Vocal</span>
+</div>
+</div>
+</article>
+<!-- Card 4 -->
+<article class="group bg-surface-charcoal rim-light rounded-xl p-4 md:p-6 flex flex-col md:flex-row gap-6 hover:bg-surface-container-highest/80 transition-all duration-300 relative overflow-hidden backdrop-blur-md">
+<div class="flex items-start md:items-center gap-4 md:w-1/3 shrink-0">
+<span class="font-display-lg text-display-lg text-surface-variant font-bold w-12 text-center select-none group-hover:text-primary-container transition-colors">04</span>
+<div class="w-24 h-24 rounded-lg overflow-hidden relative shadow-lg shrink-0">
+<img alt="Album art" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A square album cover with macro photography of shattered glass reflecting red and blue neon lights. Deep cinematic aesthetic, dark mode optimized." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCeixFmhD2dL-fEAo5lHahFVWO1HbVtYyHiOqx--iXJ-SvSp9sa5WmOkcthYaDit568o4EoxPjMKF9OMd_dmpG7LFFvfIw01Onn8C4RhKyfEulySDHNeAZ9lbJg2UO8wB3b0YhG8XmVh11gQcm68_sZEYVttPOli-JO8LggZgFYWZWV7zdyEPjTAPYDhZRFz-dQi03vzUL9otDfvLUtASY8GrHhNPbeed5_i9kcDsiwufb1BxIX7vcZ"/>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+<span class="material-symbols-outlined text-white text-3xl" data-icon="play_circle" style="font-variation-settings: 'FILL' 1;">play_circle</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col justify-center flex-grow">
+<div class="flex justify-between items-start mb-unit">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Shattered Echoes</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Lorn</p>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors opacity-0 group-hover:opacity-100 p-2" title="Copy Info">
+<span class="material-symbols-outlined text-[20px]" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+<p class="font-body-sm text-[13px] leading-relaxed text-on-surface-variant/80 mt-stack-sm border-l-2 border-surface-variant pl-3 italic">
+                        "Heavy, distorted bass and a slow tempo provide a grounded, intense listening experience you often gravitate towards."
+                    </p>
+<div class="flex flex-wrap gap-2 mt-stack-sm">
+<span class="px-3 py-1 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm rim-light">Darkwave</span>
+<span class="px-3 py-1 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm rim-light">Heavy</span>
+<span class="px-3 py-1 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm rim-light">90 BPM</span>
+</div>
+</div>
+</article>
+<!-- Card 5 -->
+<article class="group bg-surface-charcoal rim-light rounded-xl p-4 md:p-6 flex flex-col md:flex-row gap-6 hover:bg-surface-container-highest/80 transition-all duration-300 relative overflow-hidden backdrop-blur-md">
+<div class="flex items-start md:items-center gap-4 md:w-1/3 shrink-0">
+<span class="font-display-lg text-display-lg text-surface-variant font-bold w-12 text-center select-none group-hover:text-primary-container transition-colors">05</span>
+<div class="w-24 h-24 rounded-lg overflow-hidden relative shadow-lg shrink-0">
+<img alt="Album art" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A square album cover featuring a minimal geometric landscape in shades of deep charcoal and vivid orange. Cinematic composition, premium digital aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVWDcolXRBfcniKKDP7YYAejzxZOkOs4aQeHNizPXC9gH8AgDHNX44hwRrH1JNB16L8W85J1j0gcxdWeLN6orabrCNjb_vxoK4LXrFH-5uaFxkYZoPdeZ0vH46XbOJvS6LpecKMu4lC2ANAPq2Ynt7yKBEXsVtq3Cs1lQNckuPaPC-80pgZy60POvWAbYoo5JAnUR4gWBh-woLCiZ5Uku87zMswvs3wA8H3Kx8UNKVroKm9gGFEafl"/>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+<span class="material-symbols-outlined text-white text-3xl" data-icon="play_circle" style="font-variation-settings: 'FILL' 1;">play_circle</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col justify-center flex-grow">
+<div class="flex justify-between items-start mb-unit">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Horizon Line</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Tycho</p>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors opacity-0 group-hover:opacity-100 p-2" title="Copy Info">
+<span class="material-symbols-outlined text-[20px]" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+<p class="font-body-sm text-[13px] leading-relaxed text-on-surface-variant/80 mt-stack-sm border-l-2 border-surface-variant pl-3 italic">
+                        "A cleaner, more uplifting track to serve as a palate cleanser, maintaining the electronic foundation but shifting the mood."
+                    </p>
+<div class="flex flex-wrap gap-2 mt-stack-sm">
+<span class="px-3 py-1 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm rim-light">Downtempo</span>
+<span class="px-3 py-1 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm rim-light">Uplifting</span>
+</div>
+</div>
+</article>
+</div>
+</main>
+<!-- BottomNavBar (Mobile) -->
+<nav class="fixed bottom-0 w-full flex justify-around items-center h-16 px-4 md:hidden bg-surface-container-highest/90 backdrop-blur-2xl rounded-t-xl border-t border-glass-border shadow-lg z-50">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-variant/50 w-full h-full rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-sm text-label-sm mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary w-full h-full rounded-lg transition-colors scale-90 transition-all duration-150 relative" href="#">
+<div class="absolute inset-0 bg-primary/10 rounded-lg"></div>
+<span class="material-symbols-outlined" data-icon="explore" style="font-variation-settings: 'FILL' 1;">explore</span>
+<span class="font-label-sm text-label-sm mt-1 font-bold">Explore</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-variant/50 w-full h-full rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span>
+<span class="font-label-sm text-label-sm mt-1">AI Studio</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-variant/50 w-full h-full rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="library_music">library_music</span>
+<span class="font-label-sm text-label-sm mt-1">Library</span>
+</a>
+</nav>
+<script>
+        // Simple copy to clipboard functionality
+        document.querySelectorAll('button[title="Copy Info"]').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const card = button.closest('article');
+                const title = card.querySelector('h3').innerText;
+                const artist = card.querySelector('p').innerText;
+                const textToCopy = `${title} by ${artist}`;
+                
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    const icon = button.querySelector('.material-symbols-outlined');
+                    const originalIcon = icon.getAttribute('data-icon');
+                    
+                    // Temporarily change icon to check
+                    icon.textContent = 'check';
+                    icon.setAttribute('data-icon', 'check');
+                    button.classList.add('text-primary');
+                    
+                    setTimeout(() => {
+                        icon.textContent = originalIcon;
+                        icon.setAttribute('data-icon', originalIcon);
+                        button.classList.remove('text-primary');
+                    }, 2000);
+                });
+            });
+        });
+    </script>
+</body></html>

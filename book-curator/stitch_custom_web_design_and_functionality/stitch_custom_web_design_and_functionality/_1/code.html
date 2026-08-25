@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Melody AI - Survey</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#e5e2e1",
+                        "on-tertiary-fixed-variant": "#4f00d0",
+                        "on-secondary-fixed-variant": "#004299",
+                        "primary-fixed": "#ffdad4",
+                        "primary-container": "#ff5540",
+                        "outline-variant": "#603e39",
+                        "primary-fixed-dim": "#ffb4a8",
+                        "surface": "#131313",
+                        "secondary-fixed": "#d9e2ff",
+                        "surface-container-highest": "#353534",
+                        "surface-charcoal": "#1A1A1A",
+                        "surface-variant": "#353534",
+                        "on-tertiary-container": "#2f0084",
+                        "on-error": "#690005",
+                        "surface-container-high": "#2a2a2a",
+                        "on-primary": "#690100",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-secondary": "#002d6d",
+                        "background": "#131313",
+                        "on-secondary-fixed": "#001944",
+                        "active-gradient": "linear-gradient(135deg, #FF0000 0%, #7C4DFF 100%)",
+                        "error": "#ffb4ab",
+                        "on-error-container": "#ffdad6",
+                        "secondary-fixed-dim": "#afc6ff",
+                        "outline": "#b18780",
+                        "secondary-container": "#005dd2",
+                        "tertiary-fixed": "#e8deff",
+                        "secondary": "#afc6ff",
+                        "tertiary-fixed-dim": "#cdbdff",
+                        "error-container": "#93000a",
+                        "on-tertiary": "#370096",
+                        "primary": "#ffb4a8",
+                        "tertiary-container": "#9a7bff",
+                        "inverse-primary": "#c00100",
+                        "surface-container-low": "#1c1b1b",
+                        "glass-border": "rgba(255, 255, 255, 0.08)",
+                        "on-secondary-container": "#d6e0ff",
+                        "on-surface-variant": "#ebbbb4",
+                        "on-primary-container": "#5c0000",
+                        "surface-container": "#201f1f",
+                        "inverse-on-surface": "#313030",
+                        "on-background": "#e5e2e1",
+                        "surface-dim": "#131313",
+                        "tertiary": "#cdbdff",
+                        "on-primary-fixed": "#410000",
+                        "surface-tint": "#ffb4a8",
+                        "surface-bright": "#3a3939",
+                        "on-primary-fixed-variant": "#930100",
+                        "on-surface": "#e5e2e1",
+                        "on-tertiary-fixed": "#20005f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "48px",
+                        "stack-sm": "8px",
+                        "gutter": "16px",
+                        "unit": "4px",
+                        "margin-desktop": "48px",
+                        "margin-mobile": "16px",
+                        "stack-md": "24px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg-mobile": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "label-caps": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "500" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(26, 26, 26, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .option-card {
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .option-card:hover {
+            transform: scale(1.02);
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(53, 53, 52, 0.5);
+        }
+        
+        .option-card.selected {
+            background: rgba(255, 85, 64, 0.15); /* primary-container with opacity */
+            border-color: #ffb4a8; /* primary */
+        }
+        
+        .progress-bar-fill {
+            background: linear-gradient(135deg, #FF0000 0%, #7C4DFF 100%);
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen flex flex-col antialiased selection:bg-primary-container selection:text-on-primary-container overflow-hidden">
+<!-- Top Navigation for Onboarding Context (No Full Nav Shell) -->
+<header class="w-full flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 z-50">
+<div class="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg text-primary tracking-tighter">
+            Melody AI
+        </div>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors duration-200">
+<span class="font-label-caps text-label-caps uppercase tracking-widest">Skip Setup</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col items-center justify-center px-margin-mobile md:px-margin-desktop w-full max-w-4xl mx-auto relative z-10">
+<!-- Progress Indicator -->
+<div class="w-full mb-stack-lg max-w-2xl">
+<div class="flex justify-between items-center mb-stack-sm">
+<span class="font-label-caps text-label-caps text-primary tracking-widest uppercase">Question 1 of 5</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">20%</span>
+</div>
+<div class="h-1 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full progress-bar-fill rounded-full" style="width: 20%;"></div>
+</div>
+</div>
+<!-- Question Container -->
+<div class="w-full max-w-2xl glass-panel rounded-xl p-8 md:p-12 text-center flex flex-col items-center mb-stack-md">
+<h1 class="font-headline-md text-headline-md md:font-display-lg-mobile md:text-display-lg-mobile text-on-surface mb-stack-sm">
+                What's your current energy level?
+            </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-stack-lg">
+                We'll use this to tailor your initial AI-generated soundscapes.
+            </p>
+<!-- Options Grid (Bento style) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter w-full">
+<!-- Option 1 -->
+<button class="option-card rounded-lg p-6 flex flex-col items-center justify-center gap-stack-sm text-center bg-surface-charcoal focus:outline-none">
+<span class="material-symbols-outlined text-4xl text-primary mb-2" data-icon="bedtime">bedtime</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Winding Down</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Preparing for rest or sleep</span>
+</button>
+<!-- Option 2 -->
+<button class="option-card selected rounded-lg p-6 flex flex-col items-center justify-center gap-stack-sm text-center bg-surface-charcoal focus:outline-none relative overflow-hidden">
+<!-- Selected indicator glow -->
+<div class="absolute inset-0 bg-primary/10 rounded-lg pointer-events-none"></div>
+<span class="material-symbols-outlined text-4xl text-primary mb-2" data-icon="self_improvement">self_improvement</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Relaxed &amp; Centered</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Calm focus, reading, chilling</span>
+</button>
+<!-- Option 3 -->
+<button class="option-card rounded-lg p-6 flex flex-col items-center justify-center gap-stack-sm text-center bg-surface-charcoal focus:outline-none">
+<span class="material-symbols-outlined text-4xl text-primary mb-2" data-icon="directions_run">directions_run</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Active &amp; Moving</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Working out, commuting</span>
+</button>
+<!-- Option 4 -->
+<button class="option-card rounded-lg p-6 flex flex-col items-center justify-center gap-stack-sm text-center bg-surface-charcoal focus:outline-none">
+<span class="material-symbols-outlined text-4xl text-primary mb-2" data-icon="bolt">bolt</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">High Energy</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Party mode, pure motivation</span>
+</button>
+</div>
+</div>
+<!-- Navigation Controls -->
+<div class="w-full max-w-2xl flex justify-between items-center mt-stack-md">
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-on-surface transition-colors duration-200 px-6 py-3 rounded-full border border-glass-border hover:bg-surface-variant/30">
+<span class="material-symbols-outlined text-lg" data-icon="arrow_back">arrow_back</span>
+<span class="font-label-caps text-label-caps uppercase tracking-widest">Back</span>
+</button>
+<button class="flex items-center gap-2 text-on-surface px-8 py-3 rounded-full transition-transform duration-200 hover:scale-105 active:scale-95" style="background: linear-gradient(135deg, #FF0000 0%, #7C4DFF 100%);">
+<span class="font-label-caps text-label-caps uppercase tracking-widest font-bold">Next</span>
+<span class="material-symbols-outlined text-lg" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</main>
+<!-- Background Atmospheric Elements (No image tags used as requested, relying on CSS gradients for depth) -->
+<div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+<!-- Ambient Glow Top Right -->
+<div class="absolute -top-[20%] -right-[10%] w-[50vw] h-[50vw] rounded-full bg-primary-container/5 blur-[120px]"></div>
+<!-- Ambient Glow Bottom Left -->
+<div class="absolute -bottom-[20%] -left-[10%] w-[60vw] h-[60vw] rounded-full bg-tertiary-container/5 blur-[150px]"></div>
+</div>
+<!-- Inject Data Document content for context (Hidden but present) -->
+<div class="hidden" id="survey-data-source">
+        {{DATA:DOCUMENT:DOCUMENT_1}}
+    </div>
+</body></html>

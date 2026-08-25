@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Melody AI - Welcome</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#e5e2e1",
+                        "on-tertiary-fixed-variant": "#4f00d0",
+                        "on-secondary-fixed-variant": "#004299",
+                        "primary-fixed": "#ffdad4",
+                        "primary-container": "#ff5540",
+                        "outline-variant": "#603e39",
+                        "primary-fixed-dim": "#ffb4a8",
+                        "surface": "#131313",
+                        "secondary-fixed": "#d9e2ff",
+                        "surface-container-highest": "#353534",
+                        "surface-charcoal": "#1A1A1A",
+                        "surface-variant": "#353534",
+                        "on-tertiary-container": "#2f0084",
+                        "on-error": "#690005",
+                        "surface-container-high": "#2a2a2a",
+                        "on-primary": "#690100",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-secondary": "#002d6d",
+                        "background": "#131313",
+                        "on-secondary-fixed": "#001944",
+                        "active-gradient": "linear-gradient(135deg, #FF0000 0%, #7C4DFF 100%)",
+                        "error": "#ffb4ab",
+                        "on-error-container": "#ffdad6",
+                        "secondary-fixed-dim": "#afc6ff",
+                        "outline": "#b18780",
+                        "secondary-container": "#005dd2",
+                        "tertiary-fixed": "#e8deff",
+                        "secondary": "#afc6ff",
+                        "tertiary-fixed-dim": "#cdbdff",
+                        "error-container": "#93000a",
+                        "on-tertiary": "#370096",
+                        "primary": "#ffb4a8",
+                        "tertiary-container": "#9a7bff",
+                        "inverse-primary": "#c00100",
+                        "surface-container-low": "#1c1b1b",
+                        "glass-border": "rgba(255, 255, 255, 0.08)",
+                        "on-secondary-container": "#d6e0ff",
+                        "on-surface-variant": "#ebbbb4",
+                        "on-primary-container": "#5c0000",
+                        "surface-container": "#201f1f",
+                        "inverse-on-surface": "#313030",
+                        "on-background": "#e5e2e1",
+                        "surface-dim": "#131313",
+                        "tertiary": "#cdbdff",
+                        "on-primary-fixed": "#410000",
+                        "surface-tint": "#ffb4a8",
+                        "surface-bright": "#3a3939",
+                        "on-primary-fixed-variant": "#930100",
+                        "on-surface": "#e5e2e1",
+                        "on-tertiary-fixed": "#20005f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "48px",
+                        "stack-sm": "8px",
+                        "gutter": "16px",
+                        "unit": "4px",
+                        "margin-desktop": "48px",
+                        "margin-mobile": "16px",
+                        "stack-md": "24px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg-mobile": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "label-caps": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "500" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+        .btn-primary {
+            background: theme('colors.active-gradient');
+            transition: all 0.2s ease-in-out;
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+        }
+        .glass-input:focus-within {
+            box-shadow: inset 0 0 0 1px theme('colors.primary');
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-margin-mobile md:p-margin-desktop bg-surface relative overflow-hidden">
+<!-- Abstract Background Element -->
+<div class="absolute inset-0 pointer-events-none opacity-20" style="background: radial-gradient(circle at 50% 0%, theme('colors.primary-container') 0%, transparent 60%);"></div>
+<main class="w-full max-w-md relative z-10 flex flex-col gap-stack-lg">
+<!-- Header -->
+<div class="text-center flex flex-col gap-stack-sm">
+<div class="w-16 h-16 mx-auto bg-surface-charcoal rounded-xl border border-glass-border flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">graphic_eq</span>
+</div>
+<h1 class="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg text-primary tracking-tighter">Melody AI</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Your personalized AI music curator. Enter your API key to begin.</p>
+</div>
+<!-- Input Section -->
+<form class="bg-surface-charcoal border border-glass-border rounded-xl p-stack-md flex flex-col gap-stack-md relative shadow-2xl backdrop-blur-xl">
+<div class="flex flex-col gap-stack-sm">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest" for="api-key">OpenAI API Key</label>
+<div class="relative flex items-center bg-surface border border-glass-border rounded-lg glass-input transition-shadow duration-200">
+<span class="material-symbols-outlined text-on-surface-variant ml-4 mr-2 text-xl" style="font-variation-settings: 'FILL' 0;">key</span>
+<input class="w-full bg-transparent border-none text-on-surface font-body-md focus:ring-0 px-2 py-3 placeholder:text-on-surface-variant/50" id="api-key" placeholder="sk-..." type="password"/>
+<button aria-label="Toggle password visibility" class="p-3 text-on-surface-variant hover:text-on-surface transition-colors focus:outline-none" id="toggle-visibility" type="button">
+<span class="material-symbols-outlined" id="visibility-icon" style="font-variation-settings: 'FILL' 0;">visibility_off</span>
+</button>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant/70 text-xs mt-1">Your key is stored locally and never sent to our servers.</p>
+</div>
+<!-- Security Notice -->
+<div class="bg-surface-container-high border border-glass-border rounded-lg p-4 flex gap-4 items-start">
+<span class="material-symbols-outlined text-primary-fixed-dim" style="font-variation-settings: 'FILL' 1;">lock</span>
+<div class="flex flex-col gap-1">
+<h3 class="font-headline-sm text-headline-sm text-on-surface text-sm">Secure Environment</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-xs">
+                        {{DATA:DOCUMENT:DOCUMENT_1}}
+                    </p>
+</div>
+</div>
+<!-- Action -->
+<button class="w-full btn-primary rounded-lg py-4 font-headline-sm text-headline-sm text-white flex items-center justify-center gap-2 mt-4" type="submit">
+                Start Survey
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_forward</span>
+</button>
+</form>
+<div class="text-center mt-4">
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors underline-offset-4 hover:underline text-sm" href="#">Where do I find my API key?</a>
+</div>
+</main>
+<script>
+        document.getElementById('toggle-visibility').addEventListener('click', function() {
+            const input = document.getElementById('api-key');
+            const icon = document.getElementById('visibility-icon');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.textContent = 'visibility';
+            } else {
+                input.type = 'password';
+                icon.textContent = 'visibility_off';
+            }
+        });
+    </script>
+</body></html>

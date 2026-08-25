@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Melody AI - Loading</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#e5e2e1",
+                        "on-tertiary-fixed-variant": "#4f00d0",
+                        "on-secondary-fixed-variant": "#004299",
+                        "primary-fixed": "#ffdad4",
+                        "primary-container": "#ff5540",
+                        "outline-variant": "#603e39",
+                        "primary-fixed-dim": "#ffb4a8",
+                        "surface": "#131313",
+                        "secondary-fixed": "#d9e2ff",
+                        "surface-container-highest": "#353534",
+                        "surface-charcoal": "#1A1A1A",
+                        "surface-variant": "#353534",
+                        "on-tertiary-container": "#2f0084",
+                        "on-error": "#690005",
+                        "surface-container-high": "#2a2a2a",
+                        "on-primary": "#690100",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-secondary": "#002d6d",
+                        "background": "#131313",
+                        "on-secondary-fixed": "#001944",
+                        "active-gradient": "linear-gradient(135deg, #FF0000 0%, #7C4DFF 100%)",
+                        "error": "#ffb4ab",
+                        "on-error-container": "#ffdad6",
+                        "secondary-fixed-dim": "#afc6ff",
+                        "outline": "#b18780",
+                        "secondary-container": "#005dd2",
+                        "tertiary-fixed": "#e8deff",
+                        "secondary": "#afc6ff",
+                        "tertiary-fixed-dim": "#cdbdff",
+                        "error-container": "#93000a",
+                        "on-tertiary": "#370096",
+                        "primary": "#ffb4a8",
+                        "tertiary-container": "#9a7bff",
+                        "inverse-primary": "#c00100",
+                        "surface-container-low": "#1c1b1b",
+                        "glass-border": "rgba(255, 255, 255, 0.08)",
+                        "on-secondary-container": "#d6e0ff",
+                        "on-surface-variant": "#ebbbb4",
+                        "on-primary-container": "#5c0000",
+                        "surface-container": "#201f1f",
+                        "inverse-on-surface": "#313030",
+                        "on-background": "#e5e2e1",
+                        "surface-dim": "#131313",
+                        "tertiary": "#cdbdff",
+                        "on-primary-fixed": "#410000",
+                        "surface-tint": "#ffb4a8",
+                        "surface-bright": "#3a3939",
+                        "on-primary-fixed-variant": "#930100",
+                        "on-surface": "#e5e2e1",
+                        "on-tertiary-fixed": "#20005f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "48px",
+                        "stack-sm": "8px",
+                        "gutter": "16px",
+                        "unit": "4px",
+                        "margin-desktop": "48px",
+                        "margin-mobile": "16px",
+                        "stack-md": "24px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg-mobile": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "label-caps": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "500" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .pulse-ring {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.1; }
+            50% { transform: scale(1.5); opacity: 0.3; }
+        }
+        .glow-text {
+            text-shadow: 0 0 20px rgba(255, 180, 168, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-lg min-h-screen flex items-center justify-center overflow-hidden antialiased select-none pointer-events-none">
+<!-- Ambient Background Glow -->
+<div class="absolute inset-0 z-0 flex items-center justify-center">
+<div class="w-[80vw] h-[80vw] max-w-[800px] max-h-[800px] rounded-full bg-primary/5 blur-[120px]"></div>
+</div>
+<!-- Main Content Canvas -->
+<main class="relative z-10 flex flex-col items-center justify-center px-margin-mobile md:px-margin-desktop text-center space-y-stack-md">
+<!-- Loading Animation (Pulse/Wave) -->
+<div class="relative w-32 h-32 flex items-center justify-center mb-stack-md">
+<!-- Outer rings -->
+<div class="absolute inset-0 rounded-full border border-primary/20 pulse-ring" style="animation-delay: 0s;"></div>
+<div class="absolute inset-2 rounded-full border border-primary/30 pulse-ring" style="animation-delay: 0.5s;"></div>
+<div class="absolute inset-4 rounded-full border border-primary/40 pulse-ring" style="animation-delay: 1s;"></div>
+<!-- Core icon/logo -->
+<div class="relative w-16 h-16 rounded-full bg-surface-container-high border border-glass-border flex items-center justify-center shadow-[0_0_30px_rgba(255,180,168,0.2)]">
+<span class="material-symbols-outlined text-primary text-3xl animate-pulse" style="font-variation-settings: 'FILL' 1;">graphic_eq</span>
+</div>
+</div>
+<!-- Loading Text -->
+<div class="space-y-stack-sm flex flex-col items-center max-w-md mx-auto">
+<h1 class="font-headline-md text-headline-md text-primary glow-text tracking-tight animate-pulse">
+                Melody AI
+            </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant opacity-80 leading-relaxed max-w-[280px] md:max-w-none">
+                당신의 오늘에 어울리는 노래를 찾고 있어요.
+            </p>
+</div>
+<!-- Fake Progress Indicator (Subtle) -->
+<div class="w-48 h-1 bg-surface-container-high rounded-full overflow-hidden mt-stack-lg border border-glass-border">
+<div class="h-full bg-primary/80 rounded-full w-1/3 animate-[slide_2s_ease-in-out_infinite_alternate] shadow-[0_0_10px_rgba(255,180,168,0.5)]"></div>
+</div>
+</main>
+<style>
+        @keyframes slide {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(300%); }
+        }
+    </style>
+</body></html>
