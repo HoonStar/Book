@@ -1,0 +1,19 @@
+{
+  "name": "book-curator",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "독서 취향 큐레이터 + 완독 레이스 — 포스코퓨처엠 바이브 코딩 경진대회",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.112.4"
+  },
+  "scripts": {
+    "test": "node test/smoke.mjs && node test/booksource.test.mjs",
+    "preflight": "node scripts/preflight.mjs",
+    "import:books": "node scripts/import-books-json.mjs",
+    "import:aladin": "node scripts/import-aladin.mjs"
+  }
+}

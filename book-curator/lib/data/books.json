@@ -1,0 +1,2489 @@
+[
+  {
+    "id": "bk_001",
+    "title": "어린 왕자",
+    "author": "앙투안 드 생텍쥐페리",
+    "genres": [
+      "소설"
+    ],
+    "pages": 136,
+    "difficulty": 1,
+    "mood_tags": [
+      "위로가 필요해",
+      "가볍게 쉬고 싶어"
+    ],
+    "themes": [
+      "우정",
+      "어른",
+      "여행"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_002",
+    "title": "아몬드",
+    "author": "손원평",
+    "genres": [
+      "소설"
+    ],
+    "pages": 264,
+    "difficulty": 2,
+    "mood_tags": [
+      "몰입하고 싶어",
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "감정",
+      "성장",
+      "우정"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_003",
+    "title": "달러구트 꿈 백화점",
+    "author": "이미예",
+    "genres": [
+      "소설"
+    ],
+    "pages": 300,
+    "difficulty": 2,
+    "mood_tags": [
+      "가볍게 쉬고 싶어",
+      "위로가 필요해"
+    ],
+    "themes": [
+      "꿈",
+      "판타지",
+      "위로"
+    ],
+    "series_next": "bk_031"
+  },
+  {
+    "id": "bk_004",
+    "title": "불편한 편의점",
+    "author": "김호연",
+    "genres": [
+      "소설"
+    ],
+    "pages": 268,
+    "difficulty": 2,
+    "mood_tags": [
+      "위로가 필요해",
+      "가볍게 쉬고 싶어"
+    ],
+    "themes": [
+      "이웃",
+      "재기",
+      "일상"
+    ],
+    "series_next": "bk_032"
+  },
+  {
+    "id": "bk_005",
+    "title": "미드나잇 라이브러리",
+    "author": "매트 헤이그",
+    "genres": [
+      "소설"
+    ],
+    "pages": 408,
+    "difficulty": 3,
+    "mood_tags": [
+      "위로가 필요해",
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "후회",
+      "선택",
+      "인생"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_006",
+    "title": "데미안",
+    "author": "헤르만 헤세",
+    "genres": [
+      "소설",
+      "인문"
+    ],
+    "pages": 240,
+    "difficulty": 4,
+    "mood_tags": [
+      "성장하고 싶어",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "자아",
+      "성장",
+      "철학"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_007",
+    "title": "1984",
+    "author": "조지 오웰",
+    "genres": [
+      "소설"
+    ],
+    "pages": 424,
+    "difficulty": 4,
+    "mood_tags": [
+      "몰입하고 싶어",
+      "자극이 필요해"
+    ],
+    "themes": [
+      "감시",
+      "자유",
+      "디스토피아"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_008",
+    "title": "나미야 잡화점의 기적",
+    "author": "히가시노 게이고",
+    "genres": [
+      "소설"
+    ],
+    "pages": 456,
+    "difficulty": 2,
+    "mood_tags": [
+      "위로가 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "편지",
+      "시간",
+      "인연"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_009",
+    "title": "파친코 1",
+    "author": "이민진",
+    "genres": [
+      "소설",
+      "역사"
+    ],
+    "pages": 400,
+    "difficulty": 3,
+    "mood_tags": [
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "이민",
+      "가족",
+      "역사"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_010",
+    "title": "채식주의자",
+    "author": "한강",
+    "genres": [
+      "소설"
+    ],
+    "pages": 247,
+    "difficulty": 4,
+    "mood_tags": [
+      "자극이 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "몸",
+      "억압",
+      "가족"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_011",
+    "title": "이기적 유전자",
+    "author": "리처드 도킨스",
+    "genres": [
+      "과학"
+    ],
+    "pages": 632,
+    "difficulty": 5,
+    "mood_tags": [
+      "몰입하고 싶어",
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "진화",
+      "생물학"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_012",
+    "title": "코스모스",
+    "author": "칼 세이건",
+    "genres": [
+      "과학"
+    ],
+    "pages": 719,
+    "difficulty": 4,
+    "mood_tags": [
+      "몰입하고 싶어",
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "우주",
+      "과학사"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_013",
+    "title": "사피엔스",
+    "author": "유발 하라리",
+    "genres": [
+      "역사",
+      "과학"
+    ],
+    "pages": 636,
+    "difficulty": 4,
+    "mood_tags": [
+      "몰입하고 싶어",
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "인류",
+      "문명"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_014",
+    "title": "총, 균, 쇠",
+    "author": "재레드 다이아몬드",
+    "genres": [
+      "역사",
+      "과학"
+    ],
+    "pages": 760,
+    "difficulty": 5,
+    "mood_tags": [
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "문명",
+      "지리"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_015",
+    "title": "아주 작은 습관의 힘",
+    "author": "제임스 클리어",
+    "genres": [
+      "자기계발"
+    ],
+    "pages": 360,
+    "difficulty": 2,
+    "mood_tags": [
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "습관",
+      "실행"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_016",
+    "title": "미움받을 용기",
+    "author": "기시미 이치로·고가 후미타케",
+    "genres": [
+      "자기계발",
+      "인문"
+    ],
+    "pages": 336,
+    "difficulty": 2,
+    "mood_tags": [
+      "성장하고 싶어",
+      "위로가 필요해"
+    ],
+    "themes": [
+      "아들러",
+      "용기",
+      "관계"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_017",
+    "title": "그릿",
+    "author": "앤절라 더크워스",
+    "genres": [
+      "자기계발"
+    ],
+    "pages": 416,
+    "difficulty": 3,
+    "mood_tags": [
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "끈기",
+      "열정"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_018",
+    "title": "부자 아빠 가난한 아빠",
+    "author": "로버트 기요사키",
+    "genres": [
+      "경제경영"
+    ],
+    "pages": 440,
+    "difficulty": 2,
+    "mood_tags": [
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "돈",
+      "자산"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_019",
+    "title": "돈의 심리학",
+    "author": "모건 하우절",
+    "genres": [
+      "경제경영"
+    ],
+    "pages": 396,
+    "difficulty": 2,
+    "mood_tags": [
+      "성장하고 싶어",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "투자",
+      "심리"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_020",
+    "title": "넛지",
+    "author": "리처드 탈러·캐스 선스타인",
+    "genres": [
+      "경제경영"
+    ],
+    "pages": 428,
+    "difficulty": 4,
+    "mood_tags": [
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "행동경제학",
+      "선택"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_021",
+    "title": "죽고 싶지만 떡볶이는 먹고 싶어",
+    "author": "백세희",
+    "genres": [
+      "에세이"
+    ],
+    "pages": 268,
+    "difficulty": 1,
+    "mood_tags": [
+      "위로가 필요해",
+      "가볍게 쉬고 싶어"
+    ],
+    "themes": [
+      "마음",
+      "상담"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_022",
+    "title": "언어의 온도",
+    "author": "이기주",
+    "genres": [
+      "에세이"
+    ],
+    "pages": 396,
+    "difficulty": 1,
+    "mood_tags": [
+      "위로가 필요해",
+      "가볍게 쉬고 싶어"
+    ],
+    "themes": [
+      "말",
+      "일상"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_023",
+    "title": "여행의 이유",
+    "author": "김영하",
+    "genres": [
+      "에세이"
+    ],
+    "pages": 216,
+    "difficulty": 2,
+    "mood_tags": [
+      "가볍게 쉬고 싶어",
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "여행",
+      "글쓰기"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_024",
+    "title": "하마터면 열심히 살 뻔했다",
+    "author": "하완",
+    "genres": [
+      "에세이"
+    ],
+    "pages": 276,
+    "difficulty": 1,
+    "mood_tags": [
+      "가볍게 쉬고 싶어",
+      "위로가 필요해"
+    ],
+    "themes": [
+      "휴식",
+      "자기 페이스"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_025",
+    "title": "정의란 무엇인가",
+    "author": "마이클 샌델",
+    "genres": [
+      "인문"
+    ],
+    "pages": 444,
+    "difficulty": 4,
+    "mood_tags": [
+      "몰입하고 싶어",
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "정의",
+      "윤리"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_026",
+    "title": "소크라테스 익스프레스",
+    "author": "에릭 와이너",
+    "genres": [
+      "인문",
+      "에세이"
+    ],
+    "pages": 512,
+    "difficulty": 3,
+    "mood_tags": [
+      "성장하고 싶어",
+      "위로가 필요해"
+    ],
+    "themes": [
+      "철학",
+      "여행"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_027",
+    "title": "셜록 홈즈: 주홍색 연구",
+    "author": "아서 코난 도일",
+    "genres": [
+      "추리·스릴러"
+    ],
+    "pages": 248,
+    "difficulty": 2,
+    "mood_tags": [
+      "몰입하고 싶어",
+      "자극이 필요해"
+    ],
+    "themes": [
+      "추리",
+      "탐정"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_028",
+    "title": "그리고 아무도 없었다",
+    "author": "애거서 크리스티",
+    "genres": [
+      "추리·스릴러"
+    ],
+    "pages": 368,
+    "difficulty": 2,
+    "mood_tags": [
+      "몰입하고 싶어",
+      "자극이 필요해"
+    ],
+    "themes": [
+      "고립",
+      "반전"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_029",
+    "title": "살인자의 기억법",
+    "author": "김영하",
+    "genres": [
+      "추리·스릴러",
+      "소설"
+    ],
+    "pages": 176,
+    "difficulty": 3,
+    "mood_tags": [
+      "자극이 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "기억",
+      "심리"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_030",
+    "title": "종의 기원",
+    "author": "정유정",
+    "genres": [
+      "추리·스릴러"
+    ],
+    "pages": 384,
+    "difficulty": 3,
+    "mood_tags": [
+      "자극이 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "본성",
+      "심리"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_031",
+    "title": "달러구트 꿈 백화점 2",
+    "author": "이미예",
+    "genres": [
+      "소설"
+    ],
+    "pages": 312,
+    "difficulty": 2,
+    "mood_tags": [
+      "가볍게 쉬고 싶어",
+      "위로가 필요해"
+    ],
+    "themes": [
+      "꿈",
+      "판타지"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_032",
+    "title": "불편한 편의점 2",
+    "author": "김호연",
+    "genres": [
+      "소설"
+    ],
+    "pages": 324,
+    "difficulty": 2,
+    "mood_tags": [
+      "위로가 필요해",
+      "가볍게 쉬고 싶어"
+    ],
+    "themes": [
+      "이웃",
+      "일상"
+    ],
+    "series_next": null
+  },
+  {
+    "id": "bk_033",
+    "title": "나는 나로 살기로 했다",
+    "author": "김수현",
+    "genres": [
+      "에세이",
+      "자기계발"
+    ],
+    "pages": 288,
+    "difficulty": 2,
+    "mood_tags": [
+      "위로가 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "에세이",
+      "자기계발",
+      "힐링",
+      "집중"
+    ],
+    "series_next": null,
+    "description": "타인의 기준에서 벗어나 나다운 삶을 선택하는 마음의 문장들"
+  },
+  {
+    "id": "bk_034",
+    "title": "공정하다는 착각",
+    "author": "마이클 샌델",
+    "genres": [
+      "인문"
+    ],
+    "pages": 424,
+    "difficulty": 4,
+    "mood_tags": [
+      "자극이 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "인문",
+      "사회",
+      "자극",
+      "깊이 생각하고 싶음"
+    ],
+    "series_next": null,
+    "description": "능력주의가 정말 공정한 사회를 만드는지 질문하는 정치철학서"
+  },
+  {
+    "id": "bk_035",
+    "title": "역행자",
+    "author": "자청",
+    "genres": [
+      "자기계발",
+      "경제경영"
+    ],
+    "pages": 352,
+    "difficulty": 3,
+    "mood_tags": [
+      "자극이 필요해",
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "자기계발",
+      "경제·경영",
+      "자극",
+      "실용"
+    ],
+    "series_next": null,
+    "description": "삶의 자동화된 패턴을 바꾸고 성장의 시스템을 만드는 방법"
+  },
+  {
+    "id": "bk_036",
+    "title": "무소유",
+    "author": "법정",
+    "genres": [
+      "에세이",
+      "인문"
+    ],
+    "pages": 220,
+    "difficulty": 3,
+    "mood_tags": [
+      "위로가 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "에세이",
+      "철학",
+      "힐링",
+      "깊이 생각하고 싶음"
+    ],
+    "series_next": null,
+    "description": "덜어냄과 비움의 의미를 담담하게 전하는 산문집"
+  },
+  {
+    "id": "bk_037",
+    "title": "모순",
+    "author": "양귀자",
+    "genres": [
+      "소설"
+    ],
+    "pages": 288,
+    "difficulty": 3,
+    "mood_tags": [
+      "위로가 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "소설",
+      "가족",
+      "감동",
+      "깊이 생각하고 싶음"
+    ],
+    "series_next": null,
+    "description": "삶의 모순과 가족의 의미를 섬세하게 그려낸 장편소설"
+  },
+  {
+    "id": "bk_038",
+    "title": "침묵의 봄",
+    "author": "레이첼 카슨",
+    "genres": [
+      "과학",
+      "인문"
+    ],
+    "pages": 400,
+    "difficulty": 4,
+    "mood_tags": [
+      "자극이 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "과학",
+      "사회",
+      "자극",
+      "집중"
+    ],
+    "series_next": null,
+    "description": "환경과 인간의 관계를 바꾼 과학적 문제 제기의 고전"
+  },
+  {
+    "id": "bk_039",
+    "title": "소년이 온다",
+    "author": "한강",
+    "genres": [
+      "소설",
+      "역사"
+    ],
+    "pages": 216,
+    "difficulty": 4,
+    "mood_tags": [
+      "위로가 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "소설",
+      "역사",
+      "감동",
+      "깊이 생각하고 싶음"
+    ],
+    "series_next": null,
+    "description": "역사의 비극 속에서 인간의 존엄을 돌아보는 이야기"
+  },
+  {
+    "id": "bk_040",
+    "title": "작별하지 않는다",
+    "author": "한강",
+    "genres": [
+      "소설",
+      "역사"
+    ],
+    "pages": 332,
+    "difficulty": 4,
+    "mood_tags": [
+      "위로가 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "소설",
+      "역사",
+      "감동",
+      "집중"
+    ],
+    "series_next": null,
+    "description": "기억과 애도의 힘을 섬세하게 탐구하는 장편소설"
+  },
+  {
+    "id": "bk_041",
+    "title": "파친코",
+    "author": "이민진",
+    "genres": [
+      "소설",
+      "역사"
+    ],
+    "pages": 560,
+    "difficulty": 4,
+    "mood_tags": [
+      "위로가 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "소설",
+      "역사",
+      "감동",
+      "집중"
+    ],
+    "series_next": null,
+    "description": "한 가족의 세대에 걸친 생존과 사랑의 서사"
+  },
+  {
+    "id": "bk_042",
+    "title": "82년생 김지영",
+    "author": "조남주",
+    "genres": [
+      "소설",
+      "인문"
+    ],
+    "pages": 192,
+    "difficulty": 2,
+    "mood_tags": [
+      "자극이 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "소설",
+      "사회",
+      "자극",
+      "깊이 생각하고 싶음"
+    ],
+    "series_next": null,
+    "description": "한 여성의 삶을 통해 일상의 구조적 문제를 비추는 소설"
+  },
+  {
+    "id": "bk_043",
+    "title": "작은 아씨들",
+    "author": "루이자 메이 올컷",
+    "genres": [
+      "소설"
+    ],
+    "pages": 480,
+    "difficulty": 3,
+    "mood_tags": [
+      "위로가 필요해"
+    ],
+    "themes": [
+      "소설",
+      "성장",
+      "힐링",
+      "감동"
+    ],
+    "series_next": null,
+    "description": "네 자매의 성장과 사랑을 담은 고전 가족소설"
+  },
+  {
+    "id": "bk_044",
+    "title": "연금술사",
+    "author": "파울로 코엘료",
+    "genres": [
+      "소설"
+    ],
+    "pages": 280,
+    "difficulty": 2,
+    "mood_tags": [
+      "위로가 필요해",
+      "자극이 필요해"
+    ],
+    "themes": [
+      "소설",
+      "성장",
+      "힐링",
+      "자극"
+    ],
+    "series_next": null,
+    "description": "자신의 꿈을 찾아 떠난 양치기의 여정"
+  },
+  {
+    "id": "bk_045",
+    "title": "멋진 신세계",
+    "author": "올더스 헉슬리",
+    "genres": [
+      "소설",
+      "과학"
+    ],
+    "pages": 368,
+    "difficulty": 3,
+    "mood_tags": [
+      "자극이 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "소설",
+      "과학",
+      "자극",
+      "깊이 생각하고 싶음"
+    ],
+    "series_next": null,
+    "description": "쾌락과 효율로 통제되는 미래 사회에 대한 질문"
+  },
+  {
+    "id": "bk_046",
+    "title": "위대한 개츠비",
+    "author": "F. 스콧 피츠제럴드",
+    "genres": [
+      "소설"
+    ],
+    "pages": 240,
+    "difficulty": 3,
+    "mood_tags": [
+      "위로가 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "소설",
+      "감동",
+      "집중"
+    ],
+    "series_next": null,
+    "description": "꿈과 욕망의 시대를 살아간 한 남자의 비극"
+  },
+  {
+    "id": "bk_047",
+    "title": "죄와 벌",
+    "author": "표도르 도스토옙스키",
+    "genres": [
+      "소설",
+      "인문"
+    ],
+    "pages": 720,
+    "difficulty": 4,
+    "mood_tags": [
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "소설",
+      "철학",
+      "집중",
+      "깊이 생각하고 싶음"
+    ],
+    "series_next": null,
+    "description": "죄의식과 구원을 깊이 파고드는 심리소설"
+  },
+  {
+    "id": "bk_048",
+    "title": "백년의 고독",
+    "author": "가브리엘 가르시아 마르케스",
+    "genres": [
+      "소설"
+    ],
+    "pages": 560,
+    "difficulty": 4,
+    "mood_tags": [
+      "몰입하고 싶어",
+      "위로가 필요해"
+    ],
+    "themes": [
+      "소설",
+      "판타지",
+      "집중",
+      "감동"
+    ],
+    "series_next": null,
+    "description": "한 가문의 흥망을 통해 인간과 역사를 그린 대작"
+  },
+  {
+    "id": "bk_049",
+    "title": "참을 수 없는 존재의 가벼움",
+    "author": "밀란 쿤데라",
+    "genres": [
+      "소설",
+      "인문"
+    ],
+    "pages": 360,
+    "difficulty": 4,
+    "mood_tags": [
+      "위로가 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "소설",
+      "철학",
+      "감동",
+      "깊이 생각하고 싶음"
+    ],
+    "series_next": null,
+    "description": "사랑과 삶의 무게를 철학적으로 탐구하는 소설"
+  },
+  {
+    "id": "bk_050",
+    "title": "노르웨이의 숲",
+    "author": "무라카미 하루키",
+    "genres": [
+      "소설"
+    ],
+    "pages": 480,
+    "difficulty": 3,
+    "mood_tags": [
+      "위로가 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "소설",
+      "성장",
+      "감동",
+      "집중"
+    ],
+    "series_next": null,
+    "description": "청춘의 사랑과 상실을 담담하게 그린 소설"
+  },
+  {
+    "id": "bk_051",
+    "title": "당신, 거기 있어줄래요?",
+    "author": "기욤 뮈소",
+    "genres": [
+      "소설"
+    ],
+    "pages": 352,
+    "difficulty": 2,
+    "mood_tags": [
+      "위로가 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "소설",
+      "감동",
+      "집중"
+    ],
+    "series_next": null,
+    "description": "과거로 돌아가 삶의 선택을 마주하는 시간 여행 소설"
+  },
+  {
+    "id": "bk_052",
+    "title": "나는 메트로폴리탄 미술관의 경비원입니다",
+    "author": "패트릭 브링리",
+    "genres": [
+      "에세이",
+      "인문"
+    ],
+    "pages": 320,
+    "difficulty": 2,
+    "mood_tags": [
+      "위로가 필요해"
+    ],
+    "themes": [
+      "에세이",
+      "예술",
+      "힐링",
+      "감동"
+    ],
+    "series_next": null,
+    "description": "미술관에서 보낸 시간과 예술이 건넨 위로의 기록"
+  },
+  {
+    "id": "bk_053",
+    "title": "보통의 언어들",
+    "author": "김이나",
+    "genres": [
+      "에세이",
+      "자기계발"
+    ],
+    "pages": 280,
+    "difficulty": 2,
+    "mood_tags": [
+      "위로가 필요해"
+    ],
+    "themes": [
+      "에세이",
+      "자기계발",
+      "힐링",
+      "감동"
+    ],
+    "series_next": null,
+    "description": "사람과 마음을 이해하게 하는 일상의 언어 이야기"
+  },
+  {
+    "id": "bk_054",
+    "title": "어서 오세요, 휴남동 서점입니다",
+    "author": "황보름",
+    "genres": [
+      "소설",
+      "에세이"
+    ],
+    "pages": 364,
+    "difficulty": 2,
+    "mood_tags": [
+      "위로가 필요해"
+    ],
+    "themes": [
+      "소설",
+      "힐링",
+      "감동"
+    ],
+    "series_next": null,
+    "description": "서점에 모인 사람들이 천천히 삶을 회복하는 이야기"
+  },
+  {
+    "id": "bk_055",
+    "title": "우리가 빛의 속도로 갈 수 없다면",
+    "author": "김초엽",
+    "genres": [
+      "소설",
+      "과학"
+    ],
+    "pages": 336,
+    "difficulty": 3,
+    "mood_tags": [
+      "위로가 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "소설",
+      "과학",
+      "감동",
+      "집중"
+    ],
+    "series_next": null,
+    "description": "과학적 상상력으로 인간과 관계의 의미를 묻는 단편집"
+  },
+  {
+    "id": "bk_056",
+    "title": "지구 끝의 온실",
+    "author": "김초엽",
+    "genres": [
+      "소설",
+      "과학"
+    ],
+    "pages": 392,
+    "difficulty": 3,
+    "mood_tags": [
+      "위로가 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "소설",
+      "과학",
+      "감동",
+      "집중"
+    ],
+    "series_next": null,
+    "description": "멸망 이후의 세계에서 식물과 인간의 연결을 그린 소설"
+  },
+  {
+    "id": "bk_057",
+    "title": "파과",
+    "author": "구병모",
+    "genres": [
+      "소설"
+    ],
+    "pages": 344,
+    "difficulty": 3,
+    "mood_tags": [
+      "자극이 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "소설",
+      "액션",
+      "자극",
+      "집중"
+    ],
+    "series_next": null,
+    "description": "노년의 킬러가 자신의 삶과 존재를 돌아보는 이야기"
+  },
+  {
+    "id": "bk_058",
+    "title": "구의 증명",
+    "author": "최진영",
+    "genres": [
+      "소설"
+    ],
+    "pages": 192,
+    "difficulty": 2,
+    "mood_tags": [
+      "위로가 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "소설",
+      "감동",
+      "깊이 생각하고 싶음"
+    ],
+    "series_next": null,
+    "description": "상실한 사랑을 견디는 가장 극단적이고 아름다운 방식"
+  },
+  {
+    "id": "bk_059",
+    "title": "철학은 어떻게 삶의 무기가 되는가",
+    "author": "야마구치 슈",
+    "genres": [
+      "인문",
+      "자기계발"
+    ],
+    "pages": 272,
+    "difficulty": 2,
+    "mood_tags": [
+      "자극이 필요해",
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "철학",
+      "자기계발",
+      "자극",
+      "실용"
+    ],
+    "series_next": null,
+    "description": "철학적 사고를 일과 관계의 문제에 적용하는 안내서"
+  },
+  {
+    "id": "bk_060",
+    "title": "논어",
+    "author": "공자",
+    "genres": [
+      "인문"
+    ],
+    "pages": 360,
+    "difficulty": 4,
+    "mood_tags": [
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "철학",
+      "인문",
+      "집중",
+      "깊이 생각하고 싶음"
+    ],
+    "series_next": null,
+    "description": "배움과 관계, 삶의 태도에 대한 오래된 지혜"
+  },
+  {
+    "id": "bk_061",
+    "title": "명상록",
+    "author": "마르쿠스 아우렐리우스",
+    "genres": [
+      "인문",
+      "에세이"
+    ],
+    "pages": 280,
+    "difficulty": 3,
+    "mood_tags": [
+      "위로가 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "철학",
+      "에세이",
+      "힐링",
+      "깊이 생각하고 싶음"
+    ],
+    "series_next": null,
+    "description": "흔들리는 마음을 다스리는 스토아 철학자의 기록"
+  },
+  {
+    "id": "bk_062",
+    "title": "몰입",
+    "author": "황농문",
+    "genres": [
+      "자기계발",
+      "과학"
+    ],
+    "pages": 304,
+    "difficulty": 3,
+    "mood_tags": [
+      "몰입하고 싶어",
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "자기계발",
+      "과학",
+      "집중",
+      "실용"
+    ],
+    "series_next": null,
+    "description": "깊은 집중을 통해 문제 해결과 성장을 이루는 방법"
+  },
+  {
+    "id": "bk_063",
+    "title": "타이탄의 도구들",
+    "author": "팀 페리스",
+    "genres": [
+      "자기계발",
+      "경제경영"
+    ],
+    "pages": 368,
+    "difficulty": 3,
+    "mood_tags": [
+      "자극이 필요해",
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "자기계발",
+      "경제·경영",
+      "자극",
+      "실용"
+    ],
+    "series_next": null,
+    "description": "성공한 사람들의 습관과 사고법을 모은 실용서"
+  },
+  {
+    "id": "bk_064",
+    "title": "원씽",
+    "author": "게리 켈러",
+    "genres": [
+      "자기계발",
+      "경제경영"
+    ],
+    "pages": 280,
+    "difficulty": 2,
+    "mood_tags": [
+      "몰입하고 싶어",
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "자기계발",
+      "경제·경영",
+      "집중",
+      "실용"
+    ],
+    "series_next": null,
+    "description": "가장 중요한 한 가지에 집중하는 삶의 기술"
+  },
+  {
+    "id": "bk_065",
+    "title": "딥 워크",
+    "author": "칼 뉴포트",
+    "genres": [
+      "자기계발",
+      "과학"
+    ],
+    "pages": 360,
+    "difficulty": 3,
+    "mood_tags": [
+      "몰입하고 싶어",
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "자기계발",
+      "과학",
+      "집중",
+      "실용"
+    ],
+    "series_next": null,
+    "description": "집중력을 보호해 중요한 일을 해내는 전략"
+  },
+  {
+    "id": "bk_066",
+    "title": "생각에 관한 생각",
+    "author": "대니얼 카너먼",
+    "genres": [
+      "과학",
+      "자기계발"
+    ],
+    "pages": 720,
+    "difficulty": 4,
+    "mood_tags": [
+      "자극이 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "과학",
+      "자기계발",
+      "자극",
+      "깊이 생각하고 싶음"
+    ],
+    "series_next": null,
+    "description": "인간의 판단과 편향을 두 가지 사고 체계로 설명한다"
+  },
+  {
+    "id": "bk_067",
+    "title": "설득의 심리학",
+    "author": "로버트 치알디니",
+    "genres": [
+      "자기계발",
+      "인문"
+    ],
+    "pages": 520,
+    "difficulty": 3,
+    "mood_tags": [
+      "자극이 필요해",
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "자기계발",
+      "사회",
+      "자극",
+      "실용"
+    ],
+    "series_next": null,
+    "description": "사람의 선택을 움직이는 심리 원리를 탐구한다"
+  },
+  {
+    "id": "bk_068",
+    "title": "마케팅 불변의 법칙",
+    "author": "알 리스",
+    "genres": [
+      "경제경영"
+    ],
+    "pages": 240,
+    "difficulty": 2,
+    "mood_tags": [
+      "자극이 필요해",
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "경제·경영",
+      "자극",
+      "실용"
+    ],
+    "series_next": null,
+    "description": "브랜드와 시장을 이해하는 핵심 마케팅 원칙"
+  },
+  {
+    "id": "bk_069",
+    "title": "린 스타트업",
+    "author": "에릭 리스",
+    "genres": [
+      "경제경영",
+      "자기계발"
+    ],
+    "pages": 336,
+    "difficulty": 3,
+    "mood_tags": [
+      "자극이 필요해",
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "경제·경영",
+      "자기계발",
+      "자극",
+      "실용"
+    ],
+    "series_next": null,
+    "description": "빠른 실험과 학습으로 사업을 발전시키는 방법"
+  },
+  {
+    "id": "bk_070",
+    "title": "일의 기쁨과 슬픔",
+    "author": "장류진",
+    "genres": [
+      "소설",
+      "인문"
+    ],
+    "pages": 240,
+    "difficulty": 2,
+    "mood_tags": [
+      "위로가 필요해",
+      "가볍게 쉬고 싶어"
+    ],
+    "themes": [
+      "소설",
+      "사회",
+      "감동",
+      "가볍게 즐기고 싶음"
+    ],
+    "series_next": null,
+    "description": "오늘을 살아가는 직장인의 현실과 감정을 담은 소설집"
+  },
+  {
+    "id": "bk_071",
+    "title": "쇼코의 미소",
+    "author": "최은영",
+    "genres": [
+      "소설",
+      "에세이"
+    ],
+    "pages": 296,
+    "difficulty": 2,
+    "mood_tags": [
+      "위로가 필요해"
+    ],
+    "themes": [
+      "소설",
+      "에세이",
+      "감동",
+      "힐링"
+    ],
+    "series_next": null,
+    "description": "관계의 여운과 다정함을 섬세하게 담은 단편집"
+  },
+  {
+    "id": "bk_072",
+    "title": "밝은 밤",
+    "author": "최은영",
+    "genres": [
+      "소설",
+      "역사"
+    ],
+    "pages": 344,
+    "difficulty": 3,
+    "mood_tags": [
+      "위로가 필요해"
+    ],
+    "themes": [
+      "소설",
+      "역사",
+      "감동",
+      "힐링"
+    ],
+    "series_next": null,
+    "description": "여러 세대 여성들의 삶과 연대를 그린 가족소설"
+  },
+  {
+    "id": "bk_073",
+    "title": "달까지 가자",
+    "author": "장류진",
+    "genres": [
+      "소설",
+      "경제경영"
+    ],
+    "pages": 352,
+    "difficulty": 2,
+    "mood_tags": [
+      "자극이 필요해",
+      "가볍게 쉬고 싶어"
+    ],
+    "themes": [
+      "소설",
+      "경제·경영",
+      "자극",
+      "가볍게 즐기고 싶음"
+    ],
+    "series_next": null,
+    "description": "돈과 우정을 둘러싼 세 직장인의 유쾌한 현실 이야기"
+  },
+  {
+    "id": "bk_074",
+    "title": "재인, 재욱, 재훈",
+    "author": "정세랑",
+    "genres": [
+      "소설"
+    ],
+    "pages": 280,
+    "difficulty": 2,
+    "mood_tags": [
+      "위로가 필요해"
+    ],
+    "themes": [
+      "소설",
+      "판타지",
+      "힐링",
+      "감동"
+    ],
+    "series_next": null,
+    "description": "가족과 타인을 지키는 다정한 초능력 이야기"
+  },
+  {
+    "id": "bk_075",
+    "title": "피프티 피플",
+    "author": "정세랑",
+    "genres": [
+      "소설",
+      "인문"
+    ],
+    "pages": 396,
+    "difficulty": 3,
+    "mood_tags": [
+      "위로가 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "소설",
+      "사회",
+      "감동",
+      "집중"
+    ],
+    "series_next": null,
+    "description": "한 병원을 오가는 사람들의 삶이 서로 연결되는 소설"
+  },
+  {
+    "id": "bk_076",
+    "title": "보건교사 안은영",
+    "author": "정세랑",
+    "genres": [
+      "소설"
+    ],
+    "pages": 280,
+    "difficulty": 2,
+    "mood_tags": [
+      "자극이 필요해",
+      "가볍게 쉬고 싶어"
+    ],
+    "themes": [
+      "소설",
+      "판타지",
+      "자극",
+      "가볍게 즐기고 싶음"
+    ],
+    "series_next": null,
+    "description": "젤리를 보는 보건교사의 유쾌한 학교 퇴마기"
+  },
+  {
+    "id": "bk_077",
+    "title": "이상한 정상가족",
+    "author": "김희경",
+    "genres": [
+      "인문"
+    ],
+    "pages": 320,
+    "difficulty": 3,
+    "mood_tags": [
+      "자극이 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "사회",
+      "인문",
+      "자극",
+      "깊이 생각하고 싶음"
+    ],
+    "series_next": null,
+    "description": "가족이라는 이름 아래의 통념과 폭력을 비판적으로 본다"
+  },
+  {
+    "id": "bk_078",
+    "title": "선량한 차별주의자",
+    "author": "김지혜",
+    "genres": [
+      "인문"
+    ],
+    "pages": 240,
+    "difficulty": 2,
+    "mood_tags": [
+      "자극이 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "사회",
+      "인문",
+      "자극",
+      "깊이 생각하고 싶음"
+    ],
+    "series_next": null,
+    "description": "일상 속 차별을 알아차리고 질문하게 하는 책"
+  },
+  {
+    "id": "bk_079",
+    "title": "다정한 것이 살아남는다",
+    "author": "브라이언 헤어",
+    "genres": [
+      "과학",
+      "인문"
+    ],
+    "pages": 360,
+    "difficulty": 3,
+    "mood_tags": [
+      "위로가 필요해",
+      "자극이 필요해"
+    ],
+    "themes": [
+      "과학",
+      "사회",
+      "감동",
+      "자극"
+    ],
+    "series_next": null,
+    "description": "협력과 친화력이 인류의 진화를 이끈 이유를 설명한다"
+  },
+  {
+    "id": "bk_080",
+    "title": "호모 데우스",
+    "author": "유발 하라리",
+    "genres": [
+      "역사",
+      "과학"
+    ],
+    "pages": 600,
+    "difficulty": 4,
+    "mood_tags": [
+      "자극이 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "역사",
+      "과학",
+      "자극",
+      "집중"
+    ],
+    "series_next": null,
+    "description": "인류가 앞으로 어떤 존재가 될지 질문하는 미래 전망서"
+  },
+  {
+    "id": "bk_081",
+    "title": "문명의 충돌",
+    "author": "새뮤얼 헌팅턴",
+    "genres": [
+      "역사",
+      "인문"
+    ],
+    "pages": 520,
+    "difficulty": 4,
+    "mood_tags": [
+      "자극이 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "역사",
+      "사회",
+      "자극",
+      "깊이 생각하고 싶음"
+    ],
+    "series_next": null,
+    "description": "세계 정치와 문화권의 관계를 분석한 국제정치 고전"
+  },
+  {
+    "id": "bk_082",
+    "title": "역사의 쓸모",
+    "author": "최태성",
+    "genres": [
+      "역사",
+      "인문"
+    ],
+    "pages": 296,
+    "difficulty": 2,
+    "mood_tags": [
+      "자극이 필요해",
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "역사",
+      "인문",
+      "자극",
+      "실용"
+    ],
+    "series_next": null,
+    "description": "역사를 현재의 삶에 활용하는 관점을 전한다"
+  },
+  {
+    "id": "bk_083",
+    "title": "설민석의 조선왕조실록",
+    "author": "설민석",
+    "genres": [
+      "역사"
+    ],
+    "pages": 480,
+    "difficulty": 3,
+    "mood_tags": [
+      "몰입하고 싶어",
+      "가볍게 쉬고 싶어"
+    ],
+    "themes": [
+      "역사",
+      "집중",
+      "가볍게 즐기고 싶음"
+    ],
+    "series_next": null,
+    "description": "조선의 주요 사건과 인물을 흥미롭게 풀어낸 역사책"
+  },
+  {
+    "id": "bk_084",
+    "title": "미술관에 간 화학자",
+    "author": "전창림",
+    "genres": [
+      "과학",
+      "인문"
+    ],
+    "pages": 288,
+    "difficulty": 2,
+    "mood_tags": [
+      "몰입하고 싶어",
+      "위로가 필요해"
+    ],
+    "themes": [
+      "과학",
+      "예술",
+      "집중",
+      "감동"
+    ],
+    "series_next": null,
+    "description": "명화를 화학의 시선으로 새롭게 감상하는 책"
+  },
+  {
+    "id": "bk_085",
+    "title": "방구석 미술관",
+    "author": "조원재",
+    "genres": [
+      "인문",
+      "에세이"
+    ],
+    "pages": 336,
+    "difficulty": 2,
+    "mood_tags": [
+      "위로가 필요해",
+      "가볍게 쉬고 싶어"
+    ],
+    "themes": [
+      "예술",
+      "에세이",
+      "힐링",
+      "가볍게 즐기고 싶음"
+    ],
+    "series_next": null,
+    "description": "화가들의 삶과 작품을 쉽고 재미있게 소개한다"
+  },
+  {
+    "id": "bk_086",
+    "title": "예술의 이유",
+    "author": "사이먼 샤마",
+    "genres": [
+      "인문"
+    ],
+    "pages": 320,
+    "difficulty": 3,
+    "mood_tags": [
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "예술",
+      "인문",
+      "집중",
+      "깊이 생각하고 싶음"
+    ],
+    "series_next": null,
+    "description": "예술 작품이 탄생한 시대와 인간의 이유를 탐색한다"
+  },
+  {
+    "id": "bk_087",
+    "title": "아트인문학 여행",
+    "author": "김태진",
+    "genres": [
+      "인문",
+      "역사"
+    ],
+    "pages": 360,
+    "difficulty": 3,
+    "mood_tags": [
+      "위로가 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "예술",
+      "역사",
+      "힐링",
+      "집중"
+    ],
+    "series_next": null,
+    "description": "도시와 예술 작품을 함께 여행하는 인문학 책"
+  },
+  {
+    "id": "bk_088",
+    "title": "음악의 기쁨",
+    "author": "롤랑 마뉘엘",
+    "genres": [
+      "인문",
+      "에세이"
+    ],
+    "pages": 240,
+    "difficulty": 3,
+    "mood_tags": [
+      "위로가 필요해"
+    ],
+    "themes": [
+      "예술",
+      "에세이",
+      "힐링",
+      "감동"
+    ],
+    "series_next": null,
+    "description": "음악을 듣고 이해하는 즐거움을 안내하는 에세이"
+  },
+  {
+    "id": "bk_089",
+    "title": "나의 문화유산답사기",
+    "author": "유홍준",
+    "genres": [
+      "역사",
+      "인문"
+    ],
+    "pages": 440,
+    "difficulty": 3,
+    "mood_tags": [
+      "위로가 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "역사",
+      "예술",
+      "힐링",
+      "집중"
+    ],
+    "series_next": null,
+    "description": "우리 문화유산을 바라보는 깊고 따뜻한 시선"
+  },
+  {
+    "id": "bk_090",
+    "title": "침팬지 폴리틱스",
+    "author": "프란스 드 발",
+    "genres": [
+      "과학",
+      "인문"
+    ],
+    "pages": 360,
+    "difficulty": 3,
+    "mood_tags": [
+      "자극이 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "과학",
+      "사회",
+      "자극",
+      "집중"
+    ],
+    "series_next": null,
+    "description": "침팬지 사회의 권력과 연대를 통해 인간을 비춰본다"
+  },
+  {
+    "id": "bk_091",
+    "title": "사랑의 기술",
+    "author": "에리히 프롬",
+    "genres": [
+      "인문",
+      "자기계발"
+    ],
+    "pages": 224,
+    "difficulty": 3,
+    "mood_tags": [
+      "위로가 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "철학",
+      "자기계발",
+      "감동",
+      "깊이 생각하고 싶음"
+    ],
+    "series_next": null,
+    "description": "사랑을 감정이 아닌 배워야 할 능력으로 바라본다"
+  },
+  {
+    "id": "bk_092",
+    "title": "자존감 수업",
+    "author": "윤홍균",
+    "genres": [
+      "자기계발",
+      "에세이"
+    ],
+    "pages": 304,
+    "difficulty": 2,
+    "mood_tags": [
+      "위로가 필요해",
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "자기계발",
+      "에세이",
+      "힐링",
+      "실용"
+    ],
+    "series_next": null,
+    "description": "흔들리는 마음을 돌보고 자존감을 회복하는 연습"
+  },
+  {
+    "id": "bk_093",
+    "title": "마음의 법칙",
+    "author": "폴커 키츠",
+    "genres": [
+      "자기계발",
+      "과학"
+    ],
+    "pages": 280,
+    "difficulty": 2,
+    "mood_tags": [
+      "위로가 필요해",
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "자기계발",
+      "과학",
+      "힐링",
+      "실용"
+    ],
+    "series_next": null,
+    "description": "일상에서 작동하는 심리 법칙을 쉽게 설명한다"
+  },
+  {
+    "id": "bk_094",
+    "title": "기분이 태도가 되지 않게",
+    "author": "레몬심리",
+    "genres": [
+      "자기계발",
+      "에세이"
+    ],
+    "pages": 256,
+    "difficulty": 2,
+    "mood_tags": [
+      "위로가 필요해",
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "자기계발",
+      "에세이",
+      "힐링",
+      "실용"
+    ],
+    "series_next": null,
+    "description": "감정과 행동 사이에 건강한 거리를 만드는 방법"
+  },
+  {
+    "id": "bk_095",
+    "title": "나는 왜 네 말이 힘들까",
+    "author": "박재연",
+    "genres": [
+      "자기계발",
+      "인문"
+    ],
+    "pages": 280,
+    "difficulty": 2,
+    "mood_tags": [
+      "위로가 필요해",
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "자기계발",
+      "사회",
+      "힐링",
+      "실용"
+    ],
+    "series_next": null,
+    "description": "상처 주지 않고 마음을 전하는 대화의 기술"
+  },
+  {
+    "id": "bk_096",
+    "title": "말 그릇",
+    "author": "김윤나",
+    "genres": [
+      "자기계발",
+      "에세이"
+    ],
+    "pages": 296,
+    "difficulty": 2,
+    "mood_tags": [
+      "위로가 필요해",
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "자기계발",
+      "에세이",
+      "힐링",
+      "실용"
+    ],
+    "series_next": null,
+    "description": "말의 깊이와 관계의 온도를 높이는 마음 훈련"
+  },
+  {
+    "id": "bk_097",
+    "title": "말센스",
+    "author": "셀레스트 헤들리",
+    "genres": [
+      "자기계발",
+      "인문"
+    ],
+    "pages": 264,
+    "difficulty": 2,
+    "mood_tags": [
+      "자극이 필요해",
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "자기계발",
+      "사회",
+      "자극",
+      "실용"
+    ],
+    "series_next": null,
+    "description": "잘 말하기보다 잘 듣는 대화의 기본을 익힌다"
+  },
+  {
+    "id": "bk_098",
+    "title": "아무튼, 술",
+    "author": "김혼비",
+    "genres": [
+      "에세이"
+    ],
+    "pages": 216,
+    "difficulty": 2,
+    "mood_tags": [
+      "위로가 필요해",
+      "가볍게 쉬고 싶어"
+    ],
+    "themes": [
+      "에세이",
+      "힐링",
+      "가볍게 즐기고 싶음"
+    ],
+    "series_next": null,
+    "description": "술과 사람과 일상의 기쁨을 유쾌하게 기록한 에세이"
+  },
+  {
+    "id": "bk_099",
+    "title": "밤의 여행자들",
+    "author": "윤고은",
+    "genres": [
+      "소설",
+      "인문"
+    ],
+    "pages": 248,
+    "difficulty": 2,
+    "mood_tags": [
+      "자극이 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "소설",
+      "사회",
+      "자극",
+      "집중"
+    ],
+    "series_next": null,
+    "description": "재난 관광을 소재로 욕망과 현실을 풍자하는 소설"
+  },
+  {
+    "id": "bk_100",
+    "title": "철학의 위안",
+    "author": "알랭 드 보통",
+    "genres": [
+      "인문",
+      "에세이"
+    ],
+    "pages": 272,
+    "difficulty": 3,
+    "mood_tags": [
+      "위로가 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "철학",
+      "에세이",
+      "힐링",
+      "깊이 생각하고 싶음"
+    ],
+    "series_next": null,
+    "description": "불안과 좌절을 견디는 철학적 처방전"
+  },
+  {
+    "id": "bk_101",
+    "title": "생각의 탄생",
+    "author": "로버트 루트번스타인",
+    "genres": [
+      "과학",
+      "인문"
+    ],
+    "pages": 520,
+    "difficulty": 4,
+    "mood_tags": [
+      "자극이 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "과학",
+      "예술",
+      "자극",
+      "집중"
+    ],
+    "series_next": null,
+    "description": "창조적 사고를 만드는 다양한 생각 도구를 소개한다"
+  },
+  {
+    "id": "bk_102",
+    "title": "팩트풀니스",
+    "author": "한스 로슬링",
+    "genres": [
+      "과학",
+      "인문"
+    ],
+    "pages": 400,
+    "difficulty": 3,
+    "mood_tags": [
+      "자극이 필요해",
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "과학",
+      "사회",
+      "자극",
+      "실용"
+    ],
+    "series_next": null,
+    "description": "세상을 사실에 기반해 바라보는 열 가지 습관"
+  },
+  {
+    "id": "bk_103",
+    "title": "넛지",
+    "author": "리처드 탈러",
+    "genres": [
+      "경제경영",
+      "과학"
+    ],
+    "pages": 432,
+    "difficulty": 3,
+    "mood_tags": [
+      "자극이 필요해",
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "경제·경영",
+      "과학",
+      "자극",
+      "실용"
+    ],
+    "series_next": null,
+    "description": "선택의 구조를 바꿔 더 나은 결정을 돕는 행동경제학"
+  },
+  {
+    "id": "bk_104",
+    "title": "부의 인문학",
+    "author": "브라운스톤",
+    "genres": [
+      "경제경영",
+      "인문"
+    ],
+    "pages": 320,
+    "difficulty": 2,
+    "mood_tags": [
+      "자극이 필요해",
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "경제·경영",
+      "인문",
+      "자극",
+      "실용"
+    ],
+    "series_next": null,
+    "description": "인문학과 경제학으로 부의 원리를 바라보는 책"
+  },
+  {
+    "id": "bk_105",
+    "title": "돈의 속성",
+    "author": "김승호",
+    "genres": [
+      "경제경영",
+      "자기계발"
+    ],
+    "pages": 392,
+    "difficulty": 3,
+    "mood_tags": [
+      "자극이 필요해",
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "경제·경영",
+      "자기계발",
+      "자극",
+      "실용"
+    ],
+    "series_next": null,
+    "description": "돈을 대하는 태도와 관리의 기본 원칙"
+  },
+  {
+    "id": "bk_106",
+    "title": "트렌드 코리아 2024",
+    "author": "김난도 외",
+    "genres": [
+      "경제경영",
+      "인문"
+    ],
+    "pages": 432,
+    "difficulty": 3,
+    "mood_tags": [
+      "자극이 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "경제·경영",
+      "사회",
+      "자극",
+      "집중"
+    ],
+    "series_next": null,
+    "description": "변화하는 사회와 소비 흐름을 읽는 연간 전망서"
+  },
+  {
+    "id": "bk_107",
+    "title": "블랙 스완",
+    "author": "나심 니콜라스 탈레브",
+    "genres": [
+      "경제경영",
+      "인문"
+    ],
+    "pages": 480,
+    "difficulty": 4,
+    "mood_tags": [
+      "자극이 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "경제·경영",
+      "철학",
+      "자극",
+      "깊이 생각하고 싶음"
+    ],
+    "series_next": null,
+    "description": "예측하기 어려운 사건과 인간의 판단 오류를 분석한다"
+  },
+  {
+    "id": "bk_108",
+    "title": "클루지",
+    "author": "개리 마커스",
+    "genres": [
+      "과학",
+      "자기계발"
+    ],
+    "pages": 288,
+    "difficulty": 2,
+    "mood_tags": [
+      "자극이 필요해",
+      "성장하고 싶어"
+    ],
+    "themes": [
+      "과학",
+      "자기계발",
+      "자극",
+      "실용"
+    ],
+    "series_next": null,
+    "description": "불완전한 마음이 만드는 실수와 편향을 이해한다"
+  },
+  {
+    "id": "bk_109",
+    "title": "마음챙김의 시",
+    "author": "류시화",
+    "genres": [
+      "에세이",
+      "인문"
+    ],
+    "pages": 224,
+    "difficulty": 2,
+    "mood_tags": [
+      "위로가 필요해"
+    ],
+    "themes": [
+      "에세이",
+      "철학",
+      "힐링",
+      "감동"
+    ],
+    "series_next": null,
+    "description": "잠시 멈춰 현재의 마음을 바라보게 하는 시와 글"
+  },
+  {
+    "id": "bk_110",
+    "title": "시선으로부터,",
+    "author": "정세랑",
+    "genres": [
+      "소설"
+    ],
+    "pages": 396,
+    "difficulty": 3,
+    "mood_tags": [
+      "위로가 필요해"
+    ],
+    "themes": [
+      "소설",
+      "가족",
+      "감동",
+      "힐링"
+    ],
+    "series_next": null,
+    "description": "한 예술가의 삶을 기억하는 가족들의 이야기"
+  },
+  {
+    "id": "bk_111",
+    "title": "작은 땅의 야수들",
+    "author": "김주혜",
+    "genres": [
+      "소설",
+      "역사"
+    ],
+    "pages": 560,
+    "difficulty": 4,
+    "mood_tags": [
+      "위로가 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "소설",
+      "역사",
+      "감동",
+      "집중"
+    ],
+    "series_next": null,
+    "description": "격변의 시대를 살아낸 사람들의 사랑과 생존의 서사"
+  },
+  {
+    "id": "bk_112",
+    "title": "아버지의 해방일지",
+    "author": "정지아",
+    "genres": [
+      "소설"
+    ],
+    "pages": 268,
+    "difficulty": 2,
+    "mood_tags": [
+      "위로가 필요해",
+      "가볍게 쉬고 싶어"
+    ],
+    "themes": [
+      "소설",
+      "가족",
+      "감동",
+      "가볍게 즐기고 싶음"
+    ],
+    "series_next": null,
+    "description": "아버지의 죽음을 계기로 가족의 삶을 돌아보는 이야기"
+  },
+  {
+    "id": "bk_113",
+    "title": "리틀 라이프",
+    "author": "한야 야나기하라",
+    "genres": [
+      "소설"
+    ],
+    "pages": 900,
+    "difficulty": 4,
+    "mood_tags": [
+      "위로가 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "소설",
+      "성장",
+      "감동",
+      "깊이 생각하고 싶음"
+    ],
+    "series_next": null,
+    "description": "우정과 상처, 사랑의 극한을 탐구하는 장편소설"
+  },
+  {
+    "id": "bk_114",
+    "title": "클라라와 태양",
+    "author": "가즈오 이시구로",
+    "genres": [
+      "소설",
+      "과학"
+    ],
+    "pages": 360,
+    "difficulty": 3,
+    "mood_tags": [
+      "위로가 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "소설",
+      "과학",
+      "감동",
+      "집중"
+    ],
+    "series_next": null,
+    "description": "인공지능과 인간의 사랑과 희생을 그린 미래소설"
+  },
+  {
+    "id": "bk_115",
+    "title": "프로젝트 헤일메리",
+    "author": "앤디 위어",
+    "genres": [
+      "소설",
+      "과학"
+    ],
+    "pages": 560,
+    "difficulty": 3,
+    "mood_tags": [
+      "자극이 필요해",
+      "몰입하고 싶어"
+    ],
+    "themes": [
+      "소설",
+      "과학",
+      "자극",
+      "집중"
+    ],
+    "series_next": null,
+    "description": "인류를 구하기 위해 홀로 우주로 떠난 과학자의 모험"
+  }
+]

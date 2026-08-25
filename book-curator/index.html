@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>완독 레이스 — 독서 취향 큐레이터</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <span class="brand-stamp">완독</span>
+    <div class="brand-text">
+      <h1>완독 레이스</h1>
+      <p>독서 취향 큐레이터 · 같이 읽어야 끝까지 읽는다</p>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-tab="reco" role="tab">추천</button>
+    <button class="tab" data-tab="race" role="tab">레이스</button>
+    <button class="tab" data-tab="shelf" role="tab">서재</button>
+  </nav>
+</header>
+
+<main>
+<!-- ── 탭 1: 추천 ─────────────────────────────── -->
+<section id="tab-reco" class="panel active">
+  <form id="recoForm">
+    <fieldset>
+      <legend>최근 읽은 책 <small>(최대 3권 · 건너뛰어도 돼요)</small></legend>
+      <div class="auto-wrap">
+        <input id="bookSearch" type="text" placeholder="제목이나 작가로 검색" autocomplete="off" />
+        <div id="searchResults" class="dropdown" hidden></div>
+      </div>
+      <div id="recentChips" class="chips"></div>
+      <button type="button" id="unknownBtn" class="ghost small">찾는 책이 목록에 없어요</button>
+      <div id="unknownForm" class="unknown" hidden>
+        <select id="unknownGenre"></select>
+        <button type="button" id="unknownAdd" class="small">장르만 반영하기</button>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>선호 장르 <small>(1~3개)</small></legend>
+      <div id="genreChips" class="chips selectable"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>현재 기분</legend>
+      <div id="moodChips" class="chips selectable"></div>
+    </fieldset>
+
+    <fieldset class="grid2">
+      <label>하루 독서 시간 <output id="minOut">30분</output>
+        <input id="minutes" type="range" min="5" max="240" step="5" value="30" />
+      </label>
+      <label>완독 목표 <output id="dayOut">30일</output>
+        <input id="targetDays" type="range" min="7" max="90" step="1" value="30" />
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>독서 속도</legend>
+      <div id="speedChips" class="chips selectable"></div>
+    </fieldset>
+
+    <button type="submit" class="primary big">이번 달 안에 끝까지 읽을 3권 찾기</button>
+  </form>
+
+  <div id="recoNotice" class="notice" hidden></div>
+  <div id="recoResults"></div>
+</section>
+
+<!-- ── 탭 2: 레이스 ────────────────────────────── -->
+<section id="tab-race" class="panel">
+  <div id="raceEmpty">
+    <div class="empty-card">
+      <h2>진행 중인 레이스가 없어요</h2>
+      <p>친구의 초대 코드로 참여하거나, 추천 탭에서 책을 골라 레이스를 시작하세요.</p>
+      <div class="join-row">
+        <input id="joinCode" type="text" placeholder="초대 코드 6자리" maxlength="6" />
+        <input id="joinNick" type="text" placeholder="닉네임" maxlength="12" />
+        <button id="joinBtn" class="primary">참여하기</button>
+      </div>
+    </div>
+  </div>
+  <div id="raceBoard" hidden></div>
+</section>
+
+<!-- ── 탭 3: 서재(노트) ─────────────────────────── -->
+<section id="tab-shelf" class="panel">
+  <div id="shelfEmpty" class="empty-card">
+    <h2>서재는 레이스와 함께 열려요</h2>
+    <p>레이스에 참여하면 감상 노트를 남기고 친구들의 노트를 볼 수 있어요.</p>
+  </div>
+  <div id="shelfBody" hidden>
+    <div class="composer card">
+      <h3>감상 노트 남기기</h3>
+      <textarea id="noteText" maxlength="500" placeholder="이 책이 왜 좋았는지, 어떤 문장이 남았는지 적어 보세요"></textarea>
+      <div class="composer-row">
+        <div id="noteColors" class="swatches"></div>
+        <div id="noteStickers" class="stickers"></div>
+      </div>
+      <button id="noteBtn" class="primary">노트 붙이기</button>
+    </div>
+    <div id="noteList" class="notes"></div>
+  </div>
+</section>
+</main>
+
+<!-- 레이스 시작 모달 -->
+<dialog id="raceModal">
+  <h3>완독 레이스 시작</h3>
+  <p id="raceModalBook" class="modal-book"></p>
+  <label>닉네임 <input id="raceNick" type="text" maxlength="12" placeholder="레이스에서 쓸 이름" /></label>
+  <div class="modal-actions">
+    <button class="ghost" data-close>취소</button>
+    <button id="raceCreateBtn" class="primary">코드 만들기</button>
+  </div>
+</dialog>
+
+<!-- 퀴즈 모달 -->
+<dialog id="quizModal">
+  <div id="quizBody"></div>
+</dialog>
+
+<div id="toast" class="toast" hidden></div>
+<footer>포스코퓨처엠 바이브 코딩 경진대회 출품작 · 데모용 샘플 도서 데이터 사용 중</footer>
+<script src="/app.js" type="module"></script>
+</body>
+</html>

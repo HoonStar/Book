@@ -1,0 +1,158 @@
+/* ── 완독 레이스: 도서관 대출카드 디렉션 ─────────────────────
+   ink #22303A · cool paper #F1F4F0 · 스탬프 그린 #0E6B5C · 하이라이터 #FFD84D */
+:root{
+  --ink:#22303A; --ink-soft:#5A6A72; --paper:#F1F4F0; --card:#FFFFFF;
+  --stamp:#0E6B5C; --stamp-deep:#0A5348; --hilite:#FFD84D; --line:#DCE3DC;
+  --rose:#FBE4E6; --mint:#DFF2E9; --butter:#FBF3D0; --npaper:#F6F3EA;
+  --radius:14px; --shadow:0 1px 3px rgba(34,48,58,.08),0 6px 20px rgba(34,48,58,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:"Pretendard Variable",Pretendard,system-ui,sans-serif;background:var(--paper);color:var(--ink);
+  line-height:1.55;padding-bottom:64px}
+main,header.top{max-width:580px;margin:0 auto;padding:0 16px}
+h1,h2,h3,.serif{font-family:"Gowun Batang",serif}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{font-family:inherit;font-size:15px;color:var(--ink)}
+
+/* 헤더 */
+header.top{padding-top:22px}
+.brand{display:flex;gap:12px;align-items:center}
+.brand-stamp{font-family:"Gowun Batang",serif;font-weight:700;width:52px;height:52px;border:2.5px solid var(--stamp);
+  border-radius:50%;color:var(--stamp);display:grid;place-items:center;font-size:17px;transform:rotate(-8deg);
+  background:radial-gradient(circle at 30% 30%,rgba(14,107,92,.08),transparent)}
+.brand-text h1{font-size:24px;letter-spacing:-.5px}
+.brand-text p{font-size:12.5px;color:var(--ink-soft)}
+.tabs{display:flex;gap:6px;margin:18px 0 14px;background:#E5EAE4;padding:4px;border-radius:12px}
+.tab{flex:1;padding:9px 0;border-radius:9px;font-weight:600;font-size:14.5px;color:var(--ink-soft)}
+.tab.active{background:var(--card);color:var(--stamp);box-shadow:var(--shadow)}
+
+/* 패널 공통 */
+.panel{display:none}
+.panel.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
+fieldset{border:none;margin-bottom:18px}
+legend{font-weight:700;font-size:14.5px;margin-bottom:8px}
+legend small{font-weight:400;color:var(--ink-soft)}
+.card,form#recoForm,.empty-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+form#recoForm{padding:18px 16px}
+.empty-card{padding:26px 20px;text-align:center}
+.empty-card p{color:var(--ink-soft);font-size:14px;margin:8px 0 16px}
+
+/* 입력 요소 */
+input[type=text],select,textarea{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;background:#FCFDFC}
+input[type=text]:focus,textarea:focus{outline:2px solid var(--stamp);outline-offset:0;border-color:transparent}
+.auto-wrap{position:relative}
+.dropdown{position:absolute;inset:calc(100% + 4px) 0 auto;background:var(--card);border:1px solid var(--line);
+  border-radius:10px;box-shadow:var(--shadow);z-index:20;max-height:240px;overflow:auto}
+.dropdown button{display:block;width:100%;text-align:left;padding:10px 12px;font-size:14px}
+.dropdown button:hover{background:var(--mint)}
+.dropdown .quiz-badge{font-size:11px;color:var(--stamp);border:1px solid var(--stamp);border-radius:99px;padding:0 6px;margin-left:6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.chip{padding:7px 13px;border-radius:99px;border:1.5px solid var(--line);font-size:14px;background:#FCFDFC}
+.chips.selectable .chip[aria-pressed=true]{background:var(--stamp);border-color:var(--stamp);color:#fff;font-weight:600}
+.chip.removable{background:var(--butter);border-color:#E8D98F}
+.chip.removable b{margin-left:6px}
+.ghost{border:1.5px dashed var(--line);border-radius:10px;padding:8px 12px;color:var(--ink-soft)}
+.small{font-size:13px;padding:7px 11px}
+.unknown{display:flex;gap:8px;margin-top:8px}
+.unknown select{flex:1}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid2 label{font-size:13.5px;font-weight:600;display:block}
+.grid2 output{float:right;color:var(--stamp);font-weight:700}
+input[type=range]{width:100%;accent-color:var(--stamp);margin-top:10px}
+.primary{background:var(--stamp);color:#fff;font-weight:700;border-radius:12px;padding:12px 18px;font-size:15px}
+.primary:hover{background:var(--stamp-deep)}
+.primary.big{width:100%;padding:15px;font-size:16px}
+.notice{margin:14px 0;padding:11px 14px;border-radius:10px;background:var(--butter);font-size:13.5px}
+
+/* 추천 결과 카드 */
+.reco-card{margin-top:14px;padding:18px 16px}
+.reco-top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.reco-title{font-size:19px;font-weight:700}
+.reco-author{color:var(--ink-soft);font-size:13px}
+.badge{font-size:11.5px;font-weight:700;color:var(--stamp);border:1.5px solid var(--stamp);border-radius:99px;padding:2px 9px;white-space:nowrap}
+.badge.gray{color:var(--ink-soft);border-color:var(--line)}
+.one-liner{font-family:"Gowun Batang",serif;font-size:16px;margin:10px 0 6px;
+  background:linear-gradient(transparent 62%,var(--hilite) 62%);display:inline}
+.why{font-size:14px;color:var(--ink-soft);margin-top:8px}
+.est-row{display:flex;gap:14px;margin-top:12px;font-size:13.5px;font-weight:600}
+.est-row span b{color:var(--stamp)}
+.score-bar{height:7px;background:#E8EDE7;border-radius:99px;margin-top:12px;overflow:hidden}
+.score-bar i{display:block;height:100%;background:var(--stamp);border-radius:99px}
+.breakdown{margin-top:10px;font-size:12.5px;color:var(--ink-soft);display:flex;gap:10px;flex-wrap:wrap}
+.reco-actions{margin-top:14px;display:flex;gap:8px}
+details.detail summary{font-size:13px;color:var(--stamp);cursor:pointer;margin-top:10px}
+.next-up{margin-top:14px;padding:14px 16px;background:var(--mint);border:1px solid #BFE3D2;border-radius:var(--radius);font-size:14px}
+
+/* 레이스 보드 */
+.race-head{padding:18px 16px;margin-bottom:14px}
+.race-head h2{font-size:20px}
+.race-head .meta{color:var(--ink-soft);font-size:13px;margin-top:4px}
+.code-ticket{margin-top:12px;border:1.5px dashed var(--stamp);border-radius:10px;padding:10px 14px;
+  display:flex;justify-content:space-between;align-items:center;background:var(--npaper)}
+.code-ticket code{font-family:"IBM Plex Mono",monospace;font-size:20px;letter-spacing:4px;color:var(--stamp);font-weight:700}
+.member{padding:14px 16px;margin-bottom:10px}
+.member-top{display:flex;justify-content:space-between;align-items:center}
+.member-name{font-weight:700}
+.member-name .me{font-size:11px;color:#fff;background:var(--stamp);border-radius:99px;padding:1px 7px;margin-left:6px}
+.member-att{font-size:12px;color:var(--ink-soft)}
+.progress{height:12px;background:#E8EDE7;border-radius:99px;margin:10px 0 8px;overflow:hidden}
+.progress i{display:block;height:100%;background:repeating-linear-gradient(-45deg,var(--hilite) 0 8px,#FFE68A 8px 16px);
+  border-radius:99px;transition:width .5s ease}
+.stamps{display:flex;gap:10px}
+.stamp{width:40px;height:40px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;
+  font-size:11px;font-weight:700;color:var(--ink-soft);font-family:"Gowun Batang",serif}
+.stamp.hit{border-color:var(--stamp);color:var(--stamp);transform:rotate(-10deg);
+  background:radial-gradient(circle at 35% 35%,rgba(14,107,92,.12),transparent);animation:stampIn .35s ease}
+@keyframes stampIn{0%{transform:scale(1.6) rotate(-20deg);opacity:0}100%{transform:scale(1) rotate(-10deg);opacity:1}}
+.cheer-row{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.cheer-row button{border:1px solid var(--line);border-radius:99px;padding:4px 10px;font-size:13px;background:#FCFDFC}
+.cheer-row button:hover{background:var(--mint)}
+.quiz-cta{width:100%;margin-top:4px}
+.crown{font-size:15px}
+.feed{margin-top:6px;padding:12px 16px}
+.feed h3{font-size:14px;margin-bottom:8px}
+.feed p{font-size:13px;color:var(--ink-soft);padding:3px 0}
+
+/* 퀴즈 모달 */
+dialog{border:none;border-radius:16px;box-shadow:var(--shadow);padding:22px 20px;width:min(92vw,440px);margin:auto}
+dialog::backdrop{background:rgba(34,48,58,.45)}
+dialog h3{font-size:18px;margin-bottom:6px}
+.modal-book{color:var(--ink-soft);font-size:13.5px;margin-bottom:12px}
+dialog label{display:block;font-size:13.5px;font-weight:600;margin:10px 0}
+dialog label input{margin-top:6px}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+.q-block{margin:14px 0}
+.q-block p{font-weight:700;font-size:15px;margin-bottom:8px}
+.q-opt{display:flex;gap:8px;align-items:center;padding:9px 11px;border:1.5px solid var(--line);border-radius:10px;margin-bottom:6px;font-size:14px}
+.q-opt:has(input:checked){border-color:var(--stamp);background:var(--mint)}
+.quiz-result{text-align:center;padding:10px 0}
+.quiz-result .big-stamp{width:88px;height:88px;margin:8px auto;border:3px solid var(--stamp);border-radius:50%;
+  display:grid;place-items:center;color:var(--stamp);font-family:"Gowun Batang",serif;font-weight:700;font-size:18px;
+  transform:rotate(-10deg);animation:stampIn .4s ease}
+.quiz-result .fail{border-color:#C05252;color:#C05252}
+
+/* 서재 노트 */
+.composer{padding:16px}
+.composer h3{font-size:16px;margin-bottom:10px}
+.composer textarea{min-height:88px;resize:vertical}
+.composer-row{display:flex;justify-content:space-between;align-items:center;margin:10px 0}
+.swatches,.stickers{display:flex;gap:8px}
+.swatch{width:26px;height:26px;border-radius:50%;border:2px solid transparent}
+.swatch[aria-pressed=true]{border-color:var(--ink)}
+.sticker{font-size:20px;opacity:.45}
+.sticker[aria-pressed=true]{opacity:1;transform:scale(1.15)}
+.notes{margin-top:16px;display:grid;gap:12px}
+.note{border-radius:4px 14px 14px 14px;padding:16px;box-shadow:var(--shadow);position:relative;border:1px solid rgba(34,48,58,.06)}
+.note .stk{position:absolute;top:-12px;right:12px;font-size:26px;filter:drop-shadow(0 2px 2px rgba(0,0,0,.15))}
+.note p{font-size:14px;white-space:pre-wrap}
+.note .who{font-size:12px;color:var(--ink-soft);margin-top:10px}
+.bg-paper{background:var(--npaper)} .bg-mint{background:var(--mint)} .bg-butter{background:var(--butter)} .bg-rose{background:var(--rose)}
+
+.join-row{display:grid;gap:8px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;
+  padding:11px 18px;border-radius:99px;font-size:14px;z-index:99;box-shadow:var(--shadow)}
+footer{text-align:center;font-size:12px;color:var(--ink-soft);margin:34px 0 10px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+@media (min-width:640px){.join-row{grid-template-columns:1fr 1fr auto}}
