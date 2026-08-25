@@ -21,6 +21,7 @@ const state = {
   pendingTitle: "",
 };
 window.nextbookRecentIds = [];
+window.nextbookExternalBooks = [];
 
 function toast(message) {
   const node = $("#toast");
@@ -67,10 +68,11 @@ recentInput?.addEventListener("input", () => {
   }
   searchTimer = setTimeout(async () => {
     try {
-      const { results = [] } = await api(`/api/books?q=${encodeURIComponent(query)}`);
+      const { results = [], source = "local" } = await api(`/api/books?q=${encodeURIComponent(query)}`);
       suggestionBox.innerHTML = results.length
-        ? results.slice(0, 8).map((book) => `<button type="button" data-book-id="${esc(book.id || "")}" data-book-title="${esc(book.title)}"><span><b>${esc(book.title)}</b><small> · ${esc(book.author)}</small></span>${book.hasQuiz ? '<span class="raceable">레이스 가능</span>' : ""}</button>`).join("")
+        ? results.slice(0, 8).map((book) => `<button type="button" data-book-id="${esc(book.id || book.externalId || "")}" data-catalog-id="${esc(book.id || "")}" data-book-title="${esc(book.title)}" data-book-author="${esc(book.author || "")}">${book.cover ? `<img class="suggestion-cover" src="${esc(book.cover)}" alt="" loading="lazy" referrerpolicy="no-referrer" />` : '<span class="suggestion-cover suggestion-cover-fallback">✦</span>'}<span class="suggestion-copy"><b>${esc(book.title)}</b><small>${esc(book.author)}${book.publisher ? ` · ${esc(book.publisher)}` : ""}</small></span>${book.hasQuiz ? '<span class="raceable">레이스 가능</span>' : book.external ? '<span class="external-source">카카오 도서</span>' : ""}</button>`).join("")
         : '<button type="button" disabled><span>검색 결과가 없어요. 입력한 제목은 장르 정보로 반영됩니다.</span></button>';
+      suggestionBox.dataset.source = source;
       suggestionBox.hidden = false;
     } catch {
       suggestionBox.hidden = true;
@@ -82,8 +84,8 @@ suggestionBox?.addEventListener("click", (event) => {
   if (!button) return;
   if (state.selectedBooks.length >= 3) return toast("최근 읽은 책은 3권까지 선택할 수 있어요.");
   if (state.selectedBooks.some((book) => book.id === button.dataset.bookId)) return;
-  state.selectedBooks.push({ id: button.dataset.bookId, title: button.dataset.bookTitle });
-  window.nextbookRecentIds = state.selectedBooks.map((book) => book.id).filter(Boolean);
+  state.selectedBooks.push({ id: button.dataset.bookId, catalogId: button.dataset.catalogId, title: button.dataset.bookTitle, author: button.dataset.bookAuthor });
+  syncSelectedBooks();
   recentInput.value = "";
   suggestionBox.hidden = true;
   renderSelectedBooks();
@@ -96,11 +98,15 @@ function renderSelectedBooks() {
   if (!wrap) return;
   wrap.innerHTML = state.selectedBooks.map((book, index) => `<button type="button" data-selected-book="${index}">✓ ${esc(book.title)}　×</button>`).join("");
 }
+function syncSelectedBooks() {
+  window.nextbookRecentIds = state.selectedBooks.map((book) => book.catalogId).filter(Boolean);
+  window.nextbookExternalBooks = state.selectedBooks.filter((book) => !book.catalogId).map((book) => ({ title: book.title, author: book.author }));
+}
 $("#recentBookChips")?.addEventListener("click", (event) => {
   const button = event.target.closest("[data-selected-book]");
   if (!button) return;
   state.selectedBooks.splice(Number(button.dataset.selectedBook), 1);
-  window.nextbookRecentIds = state.selectedBooks.map((book) => book.id).filter(Boolean);
+  syncSelectedBooks();
   renderSelectedBooks();
 });
 
@@ -940,6 +946,12 @@ function openShareBookDialog(preset = {}) {
   $("#cancelClubAction").onclick = () => $("#clubActionModal").close();
   form.onsubmit = async (event) => {
     event.preventDefault();
+    if (form.dataset.submitting === "true") return;
+    form.dataset.submitting = "true";
+    const submitButton = event.submitter || form.querySelector('[type="submit"]');
+    if (submitButton) submitButton.disabled = true;
+    const idempotencyKey = form.dataset.requestKey || newRequestKey();
+    form.dataset.requestKey = idempotencyKey;
     try {
       await clubApi("/api/bookclub", {
         method: "POST",
@@ -951,6 +963,7 @@ function openShareBookDialog(preset = {}) {
           reason: $("#shareClubReason").value,
           bookId: form.dataset.bookId,
           raceReady: form.dataset.raceReady === "true",
+          requestKey: idempotencyKey,
         }),
       });
       clubState.activeId = $("#shareClubId").value;
@@ -958,6 +971,11 @@ function openShareBookDialog(preset = {}) {
       toast("BookClub에 책을 공유했어요.");
       await loadBookclubs(clubState.activeId);
     } catch (error) { toast(error.message); }
+    finally {
+      form.dataset.submitting = "false";
+      delete form.dataset.requestKey;
+      if (submitButton) submitButton.disabled = false;
+    }
   };
   $("#clubActionModal").showModal();
 }
@@ -1023,8 +1041,24 @@ function renderRaceClubOptions() {
   select.innerHTML = '<option value="">연결하지 않음</option>' + owned.map((club) => `<option value="${club.id}">${esc(club.name)}</option>`).join("");
 }
 
+function newRequestKey() {
+  if (globalThis.crypto?.randomUUID) return crypto.randomUUID();
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+  const hex = [...bytes].map((byte) => byte.toString(16).padStart(2, "0"));
+  return `${hex.slice(0, 4).join("")}-${hex.slice(4, 6).join("")}-${hex.slice(6, 8).join("")}-${hex.slice(8, 10).join("")}-${hex.slice(10).join("")}`;
+}
+
 $("#createClubForm")?.addEventListener("submit", async (event) => {
   event.preventDefault();
+  const form = event.currentTarget;
+  if (form.dataset.submitting === "true") return;
+  form.dataset.submitting = "true";
+  const submitButton = event.submitter || form.querySelector('[type="submit"]');
+  if (submitButton) submitButton.disabled = true;
+  const idempotencyKey = form.dataset.requestKey || newRequestKey();
+  form.dataset.requestKey = idempotencyKey;
   try {
     const { club } = await clubApi("/api/bookclub", {
       method: "POST",
@@ -1033,6 +1067,7 @@ $("#createClubForm")?.addEventListener("submit", async (event) => {
         name: $("#clubName").value,
         description: $("#clubDescription").value,
         nickname: $("#clubCreateNickname").value,
+        requestKey: idempotencyKey,
       }),
     });
     event.target.reset();
@@ -1040,6 +1075,11 @@ $("#createClubForm")?.addEventListener("submit", async (event) => {
     toast(`BookClub을 만들었어요. 초대 코드는 ${club.invite_code}입니다.`);
     await loadBookclubs(club.id);
   } catch (error) { toast(error.message); }
+  finally {
+    form.dataset.submitting = "false";
+    delete form.dataset.requestKey;
+    if (submitButton) submitButton.disabled = false;
+  }
 });
 
 $("#joinClubForm")?.addEventListener("submit", async (event) => {

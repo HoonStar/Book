@@ -6,7 +6,7 @@
 import { BOOKS, searchBooks as searchLocal, hasQuiz } from "./engine.js";
 
 export function activeSource() {
-  const s = (process.env.BOOK_SOURCE || "local").toLowerCase();
+  const s = (process.env.BOOK_SOURCE || (process.env.KAKAO_REST_API_KEY ? "kakao" : "local")).toLowerCase();
   return ["local", "kakao", "aladin"].includes(s) ? s : "local";
 }
 
@@ -37,7 +37,15 @@ export function mergeExternal(extItems, localItems, limit = 8) {
   for (const ext of extItems) {
     const match = matchCatalog(ext);
     if (match) push({ id: match.id, title: match.title, author: match.author, hasQuiz: hasQuiz(match.id), cover: ext.cover || null });
-    else push({ external: true, title: ext.title, author: ext.author, isbn: ext.isbn || null, cover: ext.cover || null });
+    else push({
+      external: true,
+      externalId: `${ext.source || "external"}:${ext.isbn || norm(`${ext.title}-${ext.author}`)}`,
+      title: ext.title,
+      author: ext.author,
+      isbn: ext.isbn || null,
+      cover: ext.cover || null,
+      publisher: ext.publisher || null,
+    });
   }
   for (const l of localItems) push(l); // 외부에 없던 카탈로그 결과 보충
   return out.sort((a, b) => Boolean(b.id) - Boolean(a.id)).slice(0, limit);
@@ -62,8 +70,11 @@ const norm = (s) => String(s || "").toLowerCase().replace(/[\s·:\-–—()\[\]�
 export async function kakaoSearch(q, limit = 8) {
   const key = process.env.KAKAO_REST_API_KEY;
   if (!key) throw new Error("KAKAO_REST_API_KEY 미설정");
+  const query = String(q || "").trim().slice(0, 100);
+  if (!query) return [];
+  const size = Math.min(50, Math.max(1, Number(limit) || 8));
   const res = await fetch(
-    `https://dapi.kakao.com/v3/search/book?target=title&size=${limit}&query=${encodeURIComponent(q)}`,
+    `https://dapi.kakao.com/v3/search/book?target=title&sort=accuracy&size=${size}&query=${encodeURIComponent(query)}`,
     { headers: { Authorization: `KakaoAK ${key}` }, signal: AbortSignal.timeout(6000) }
   );
   if (!res.ok) throw new Error(`kakao ${res.status}`);
@@ -78,6 +89,7 @@ export function normalizeKakao(d) {
     isbn: pickIsbn13(d.isbn),
     cover: d.thumbnail || null,
     publisher: d.publisher || null,
+    url: d.url || null,
     pages: null, // 카카오는 쪽수 미제공 → 알라딘 ItemLookUp 또는 수기 입력으로 보강
   };
 }

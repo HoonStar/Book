@@ -233,6 +233,11 @@
         <div><span class="eyebrow">VERIFIED READING</span><h2 id="raceTitle">함께 완주하는 완독 레이스</h2><p>책 속 퀴즈로 25%마다 진도를 인증하고, 친구와 응원을 주고받아요.</p></div>
         <span class="step">03 / READING RACE</span>
       </div>
+      <ol class="race-howto" aria-label="완독 레이스 이용 방법">
+        <li><span>1</span><div><strong>레이스 만들기</strong><p>독서 취향에서 추천받은 ‘레이스 가능’ 책의 시작 버튼을 누르세요.</p></div></li>
+        <li><span>2</span><div><strong>코드로 초대하기</strong><p>만들어진 6자리 코드를 친구에게 보내거나 BookClub에 연결하세요.</p></div></li>
+        <li><span>3</span><div><strong>퀴즈로 진도 인증</strong><p>25%·50%·75%·100% 지점에서 책 퀴즈를 통과하면 진도가 올라갑니다.</p></div></li>
+      </ol>
       <div id="raceEmpty" class="race-empty">
         <div class="project-empty-art" aria-hidden="true">🏁</div>
         <h3>참여 중인 레이스가 없어요</h3>
@@ -397,7 +402,8 @@
       const moodAliases={'새로운 자극이 필요해':'자극이 필요해','차분하게 쉬고 싶어':'위로가 필요해','가볍게 웃고 싶어':'가볍게 쉬고 싶어'};
       const genres=String(input.genres||'').split(',').map(x=>x.trim()).filter(Boolean).slice(0,3);
       const recent=String(input.recent_books||'').split(',').map(x=>x.trim()).filter(Boolean).slice(0,3);
-      return {recentBookIds:window.nextbookRecentIds||[],unknownRecent:recent.map(title=>({title,genre:genres[0]||'소설'})),preferredGenres:genres.length?genres:['소설'],mood:moodAliases[input.mood]||input.mood||'몰입하고 싶어',dailyMinutes:Number(input.daily_minutes)||30,speed:'보통',targetDays:30};
+      const external=(window.nextbookExternalBooks||[]).map(book=>({title:book.title,author:book.author,genre:genres[0]||'소설'}));
+      return {recentBookIds:window.nextbookRecentIds||[],unknownRecent:[...external,...recent.map(title=>({title,genre:genres[0]||'소설'}))].slice(0,3),preferredGenres:genres.length?genres:['소설'],mood:moodAliases[input.mood]||input.mood||'몰입하고 싶어',dailyMinutes:Number(input.daily_minutes)||30,speed:'보통',targetDays:30};
     }
     async function requestOpenAI(input) { const payload=input.preferredGenres?input:normalizeRecommendInput(input); const response=await fetch('/api/recommend',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); const data=await response.json().catch(()=>({})); if(!response.ok) throw new Error(data.error||data.errors?.join(' ')||'API 요청 실패'); return data; }
     form.addEventListener('submit', async e=>{ e.preventDefault(); const btn=$('#submitBtn'); const input={recent_books:$('#recentBooks').value, genres:selectedText('#genres'), mood:selectedText('#moods'), daily_minutes:Number($('#timeRange').value), model:'gpt-4o-mini'}; btn.disabled=true; btn.innerHTML='<span>◌</span> 취향을 분석하고 있어요…'; try { const data=await requestOpenAI(input); if(!Array.isArray(data.recommendations)||data.recommendations.length!==3) throw new Error('추천 결과 형식 오류'); showResults(data.taste_summary||'입력한 취향을 바탕으로 책을 큐레이션했어요.'); renderBooks(data.recommendations,input.daily_minutes); } catch(err) { toast(err.message || '추천 서버 연결을 확인해 주세요.'); } finally { btn.disabled=false; btn.innerHTML='<span>✦</span> 내 다음 책 추천받기'; } });

@@ -4,6 +4,9 @@ import { searchUnified } from "../lib/booksource.js";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") return res.status(405).json({ error: "GET only" });
-  const data = await searchUnified(req.query.q || "", 8);
+  const query = String(req.query.q || "").trim().slice(0, 100);
+  if (!query) return res.status(200).json({ source: "local", results: [] });
+  const data = await searchUnified(query, 8);
+  res.setHeader?.("Cache-Control", "s-maxage=300, stale-while-revalidate=3600");
   return res.status(200).json(data);
 }

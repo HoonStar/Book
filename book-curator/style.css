@@ -26,8 +26,14 @@ button,input,select,textarea{font-family:inherit}
 }
 .recent-suggestions button:last-child{border-bottom:0}
 .recent-suggestions button:hover{background:rgba(140,218,255,.13)}
+.recent-suggestions button:disabled{cursor:default;opacity:.68}
 .recent-suggestions small{color:var(--muted)}
 .recent-suggestions .raceable{color:var(--ice);font-weight:700;white-space:nowrap}
+.suggestion-cover{width:32px;height:44px;flex:0 0 32px;border-radius:5px;object-fit:cover;background:#d9e5e3}
+.suggestion-cover-fallback{display:grid;place-items:center;color:#fff;background:linear-gradient(145deg,var(--ice),var(--lav))}
+.suggestion-copy{display:grid;gap:3px;min-width:0;margin-right:auto}
+.suggestion-copy b,.suggestion-copy small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.external-source{flex:none;border:1px solid rgba(251,200,79,.6);border-radius:999px;padding:4px 7px;color:#8d6a12;background:rgba(251,200,79,.14);font-size:.6rem;font-weight:700;white-space:nowrap}
 .recent-book-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
 .recent-book-chips button{
   border:1px solid var(--line-hi);border-radius:999px;padding:6px 9px;background:rgba(140,218,255,.1);
@@ -42,6 +48,10 @@ button,input,select,textarea{font-family:inherit}
 }
 .race-start:hover{transform:translateY(-1px);background:rgba(77,157,135,.2)}
 .race-wait{margin-top:12px;color:var(--muted);font-size:.64rem;text-align:center}
+.race-howto{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0 0;padding:0;list-style:none}
+.race-howto li{display:flex;gap:10px;padding:13px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.42)}
+.race-howto li>span{display:grid;place-items:center;flex:0 0 25px;height:25px;border-radius:50%;color:#fff;background:linear-gradient(135deg,var(--ice),var(--lav));font-size:.68rem;font-weight:800}
+.race-howto strong{display:block;margin:1px 0 4px;font-size:.73rem}.race-howto p{margin:0;color:var(--muted);font-size:.64rem;line-height:1.5}
 
 /* 화면 전환 */
 .project-screen{display:none;margin-top:0;padding:28px}
@@ -389,6 +399,7 @@ dialog label small{display:block;margin-top:6px;color:var(--muted);font-weight:4
   main{padding-top:82px}
   .project-screen,.my-page.my-app{padding:19px;border-radius:18px}
   .club-shell,.club-setup-grid{grid-template-columns:1fr}
+  .race-howto{grid-template-columns:1fr}
   .join-row{grid-template-columns:1fr 1fr}.join-row .project-primary{grid-column:1/-1}
   .my-stats-grid,.taste-grid{grid-template-columns:1fr}
   .my-settings{grid-template-columns:1fr}

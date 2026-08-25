@@ -1,6 +1,6 @@
 # 도서 API 연동 가이드
 
-앱은 이미 **API 연동 가능한 구조**로 준비돼 있습니다. 환경변수 하나(`BOOK_SOURCE`)로 검색 소스를 전환하고, 키가 없거나 API가 죽으면 자동으로 내장 목록으로 폴백합니다. 코드 수정 없이 켜고 끌 수 있습니다.
+앱은 카카오 책 검색 API와 연결돼 있습니다. `KAKAO_REST_API_KEY`가 있으면 카카오를 자동 사용하고, 키가 없거나 API가 일시 중단되면 내장 목록으로 안전하게 폴백합니다. `BOOK_SOURCE=local`을 명시하면 카카오 키가 있어도 로컬 검색만 사용할 수 있습니다.
 
 ## 1. 설계 — 왜 "전체 교체"가 아니라 "하이브리드"인가
 
@@ -27,7 +27,7 @@
 
 1. 키 발급 후 Vercel → Settings → Environment Variables에 추가:
    ```
-   BOOK_SOURCE=kakao
+   BOOK_SOURCE=kakao  # 선택: 키가 있으면 생략해도 자동 활성화
    KAKAO_REST_API_KEY=발급받은키
    ALADIN_TTB_KEY=발급받은키   (쪽수 보강용, 선택)
    ```

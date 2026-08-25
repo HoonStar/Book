@@ -90,7 +90,7 @@ const gi = existsSync(join(ROOT, ".gitignore")) ? readFileSync(join(ROOT, ".giti
 if (!gi.split("\n").some((l) => l.trim() === ".env")) err(".gitignore에 .env가 없음");
 
 // ── ③ 환경변수 상태 (값은 출력하지 않음) ─────────────────────
-const envState = ["OPENAI_API_KEY", "SUPABASE_URL", "SUPABASE_SECRET_KEY", "SUPABASE_SERVICE_ROLE_KEY"]
+const envState = ["OPENAI_API_KEY", "SUPABASE_URL", "SUPABASE_SECRET_KEY", "SUPABASE_SERVICE_ROLE_KEY", "BOOK_SOURCE", "KAKAO_REST_API_KEY"]
   .map((k) => `  ${process.env[k] ? "●" : "○"} ${k}`)
   .join("\n");
 

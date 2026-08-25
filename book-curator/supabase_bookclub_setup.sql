@@ -8,6 +8,7 @@ create table if not exists public.book_clubs (
   description text not null default '' check (char_length(description) <= 240),
   invite_code text not null unique check (invite_code ~ '^[A-HJ-NP-Z2-9]{6}$'),
   active_race_code text references public.rooms(code) on delete set null,
+  request_key uuid,
   created_at timestamptz not null default now()
 );
 
@@ -29,6 +30,7 @@ create table if not exists public.club_books (
   author text not null default '' check (char_length(author) <= 120),
   reason text not null default '' check (char_length(reason) <= 500),
   race_ready boolean not null default false,
+  request_key uuid,
   created_at timestamptz not null default now(),
   unique (id, club_id)
 );
@@ -46,11 +48,15 @@ create table if not exists public.club_votes (
 );
 
 create index if not exists book_clubs_owner_id_idx on public.book_clubs(owner_id);
+create unique index if not exists book_clubs_owner_request_uidx
+  on public.book_clubs(owner_id, request_key) where request_key is not null;
 create unique index if not exists book_clubs_active_race_code_uidx
   on public.book_clubs(active_race_code) where active_race_code is not null;
 create index if not exists club_members_user_id_idx on public.club_members(user_id);
 create index if not exists club_books_club_created_idx on public.club_books(club_id, created_at desc);
 create index if not exists club_books_added_by_idx on public.club_books(added_by);
+create unique index if not exists club_books_added_request_uidx
+  on public.club_books(added_by, request_key) where request_key is not null;
 create index if not exists club_votes_club_month_idx on public.club_votes(club_id, vote_month);
 create index if not exists club_votes_user_id_idx on public.club_votes(user_id);
 create index if not exists club_votes_book_club_idx on public.club_votes(club_book_id, club_id);

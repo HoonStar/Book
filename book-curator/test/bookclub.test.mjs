@@ -21,6 +21,8 @@ ok(api.includes("db.auth.getUser(token)"), "서버에서 Supabase access token �
 ok(api.includes("mine: vote.user_id === user.id") && !app.includes("vote.user_id === clubState.user.id"), "투표자 UUID를 브라우저에 노출하지 않음");
 ok(schema.includes("enable row level security") && schema.includes("revoke all on table"), "북클럽 테이블 RLS 및 브라우저 직접 권한 차단");
 ok(schema.includes("club_votes_book_club_idx") && schema.includes("club_book_id, club_id"), "복합 외래키 인덱스 구성");
+ok(schema.includes("book_clubs_owner_request_uidx") && schema.includes("club_books_added_request_uidx"), "생성 요청 중복 방지용 유니크 인덱스 구성");
+ok(api.includes("request_key: idempotencyKey") && app.includes('dataset.submitting === "true"'), "서버 요청키와 버튼 잠금으로 이중 생성 차단");
 
 console.log(`\nBookClub 결과: ${pass} 통과 / ${fail} 실패`);
 process.exit(fail ? 1 : 0);

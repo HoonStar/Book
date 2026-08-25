@@ -8,6 +8,7 @@ export default async function handler(req, res) {
     storage: storageMode,                                   // supabase | memory
     llm: process.env.OPENAI_API_KEY ? "live" : "template",  // live면 AI 문구 활성
     book_source: activeSource(),                            // local | kakao | aladin
+    kakao_books: process.env.KAKAO_REST_API_KEY ? "configured" : "not_configured",
     time: new Date().toISOString(),
   });
 }

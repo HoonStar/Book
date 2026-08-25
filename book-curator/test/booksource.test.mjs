@@ -47,5 +47,26 @@ ok(pickIsbn13("8996991341 9788996991342") === "9788996991342", "ISBN 문자열�
   process.env.BOOK_SOURCE = "local";
 }
 
+// 6) 카카오 실연동 계약: 인증 헤더·검색 옵션·응답 병합
+{
+  const originalFetch = globalThis.fetch;
+  let request;
+  process.env.BOOK_SOURCE = "kakao";
+  process.env.KAKAO_REST_API_KEY = "test-rest-key";
+  globalThis.fetch = async (url, options) => {
+    request = { url: String(url), options };
+    return {
+      ok: true,
+      json: async () => ({ documents: [{ title: "새로운 카카오 책", authors: ["테스트 작가"], isbn: "9791234567890", thumbnail: "https://img.test/book.jpg", publisher: "테스트출판" }] }),
+    };
+  };
+  const result = await searchUnified("카카오 책", 8);
+  ok(result.source === "kakao" && result.results[0]?.externalId === "kakao:9791234567890", "카카오 결과를 안정적인 외부 도서 ID로 병합");
+  ok(request.url.includes("/v3/search/book") && request.url.includes("sort=accuracy") && request.options.headers.Authorization === "KakaoAK test-rest-key", "카카오 공식 엔드포인트·인증 헤더 사용");
+  globalThis.fetch = originalFetch;
+  delete process.env.KAKAO_REST_API_KEY;
+  delete process.env.BOOK_SOURCE;
+}
+
 console.log(`\n결과: ${pass} 통과 / ${fail} 실패`);
 process.exit(fail ? 1 : 0);

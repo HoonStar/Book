@@ -12,6 +12,10 @@ const CODE_CHARS = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
 const clean = (value, max) => String(value || "").trim().slice(0, max);
 const clubCode = () => Array.from({ length: 6 }, () => CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]).join("");
 const bad = (res, message, status = 400) => res.status(status).json({ error: message });
+const requestKey = (value) => {
+  const key = clean(value, 36).toLowerCase();
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(key) ? key : null;
+};
 
 async function currentUser(req, res) {
   if (!db) {
@@ -133,13 +137,15 @@ async function createClub(body, user, res) {
   const name = clean(body.name, 60);
   const description = clean(body.description, 240);
   const nickname = clean(body.nickname || user.user_metadata?.display_name || user.email?.split("@")[0], 20);
+  const idempotencyKey = requestKey(body.requestKey);
+  if (body.requestKey && !idempotencyKey) return bad(res, "요청 식별값이 올바르지 않아요.");
   if (name.length < 2) return bad(res, "북클럽 이름을 두 글자 이상 입력해 주세요.");
   if (!nickname) return bad(res, "북클럽에서 사용할 닉네임을 입력해 주세요.");
 
   let club;
   for (let attempt = 0; attempt < 5; attempt += 1) {
     const { data, error } = await db.from("book_clubs")
-      .insert({ owner_id: user.id, name, description, invite_code: clubCode() })
+      .insert({ owner_id: user.id, name, description, invite_code: clubCode(), request_key: idempotencyKey })
       .select("id,name,description,invite_code,active_race_code,created_at")
       .single();
     if (!error) {
@@ -147,11 +153,22 @@ async function createClub(body, user, res) {
       break;
     }
     if (error.code !== "23505") throw error;
+    if (idempotencyKey) {
+      const { data: existing } = await db.from("book_clubs")
+        .select("id,name,description,invite_code,active_race_code,created_at")
+        .eq("owner_id", user.id)
+        .eq("request_key", idempotencyKey)
+        .maybeSingle();
+      if (existing) {
+        club = existing;
+        break;
+      }
+    }
   }
   if (!club) return bad(res, "초대 코드 생성에 실패했어요. 다시 시도해 주세요.", 503);
 
   const { error: memberError } = await db.from("club_members")
-    .insert({ club_id: club.id, user_id: user.id, role: "owner", nickname });
+    .upsert({ club_id: club.id, user_id: user.id, role: "owner", nickname }, { onConflict: "club_id,user_id" });
   if (memberError) {
     await db.from("book_clubs").delete().eq("id", club.id);
     throw memberError;
@@ -198,6 +215,8 @@ async function shareBook(body, user, res) {
   const author = clean(body.author, 120);
   const reason = clean(body.reason, 500);
   const bookId = clean(body.bookId, 40) || null;
+  const idempotencyKey = requestKey(body.requestKey);
+  if (body.requestKey && !idempotencyKey) return bad(res, "요청 식별값이 올바르지 않아요.");
   if (!title) return bad(res, "책 제목을 입력해 주세요.");
   const { data, error } = await db.from("club_books").insert({
     club_id: clubId,
@@ -207,7 +226,17 @@ async function shareBook(body, user, res) {
     author,
     reason,
     race_ready: Boolean(body.raceReady),
+    request_key: idempotencyKey,
   }).select("id,club_id,book_id,title,author,reason,race_ready,created_at").single();
+  if (error?.code === "23505" && idempotencyKey) {
+    const { data: existing } = await db.from("club_books")
+      .select("id,club_id,book_id,title,author,reason,race_ready,created_at")
+      .eq("club_id", clubId)
+      .eq("added_by", user.id)
+      .eq("request_key", idempotencyKey)
+      .maybeSingle();
+    if (existing) return res.status(200).json({ book: existing, duplicate: true });
+  }
   if (error) throw error;
   return res.status(200).json({ book: data });
 }
