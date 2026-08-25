@@ -138,8 +138,8 @@
   <div class="grain"></div>
   <nav>
     <a class="brand" href="#top" aria-label="NextBook 맨 위로 이동"><div class="logo">✦</div> NextBook</a>
-    <div class="nav-tabs" role="navigation" aria-label="주요 화면"><a class="nav-tab active" data-screen="taste" href="#taste">독서 취향</a><a class="nav-tab" data-screen="insights" href="#insights">독서 인사이트</a><a class="nav-tab" data-screen="records" href="#readingTools">기록</a><a class="nav-tab" data-screen="race" href="#raceScreen">완독 레이스</a><a class="nav-tab" data-screen="shelf" href="#shelfScreen">서재</a><a class="nav-tab" data-screen="mypage" href="#myPage">나의 페이지</a></div>
-    <div class="nav-actions"><div class="api-status"><i class="dot"></i><span>AI 큐레이션</span></div></div>
+    <div class="nav-tabs" role="navigation" aria-label="주요 화면"><a class="nav-tab active" data-screen="taste" href="#taste">독서 취향</a><a class="nav-tab" data-screen="insights" href="#insights">독서 인사이트</a><a class="nav-tab" data-screen="records" href="#readingTools">기록</a><a class="nav-tab" data-screen="race" href="#raceScreen">완독 레이스</a><a class="nav-tab" data-screen="bookclub" href="#bookclubScreen">BookClub</a><a class="nav-tab" data-screen="shelf" href="#shelfScreen">서재</a><a class="nav-tab" data-screen="mypage" href="#myPage">나의 페이지</a></div>
+    <div class="nav-actions"><div class="api-status"><i class="dot"></i><span>AI 큐레이션</span></div><button id="authButton" class="nav-auth" type="button">로그인</button><button id="signupButton" class="nav-signup" type="button">회원가입</button></div>
   </nav>
   <main id="top">
     <section class="hero">
@@ -195,6 +195,37 @@
         <div class="log-pane"><div class="pane-title"><h3>독서 기록 상세</h3><span>MY READING LOG</span></div><div class="log-form"><label>책 제목<input id="logTitle" type="text" placeholder="예: 달의 궁전" /></label><label>읽기 시작일<input id="logStart" type="date" /></label><label>완독일<input id="logEnd" type="date" /></label><label>별점<div class="rating" id="rating" aria-label="별점 선택"><button class="star" type="button" data-score="1">★</button><button class="star" type="button" data-score="2">★</button><button class="star" type="button" data-score="3">★</button><button class="star" type="button" data-score="4">★</button><button class="star" type="button" data-score="5">★</button></div></label><textarea id="logReview" placeholder="감상 한 줄을 남겨보세요"></textarea><textarea id="logQuote" placeholder="인상 깊은 문장 (선택)"></textarea></div><button class="log-save" id="saveLog" type="button">독서 기록 저장</button><div class="log-items" id="logItems"></div></div>
         <div class="quick-pane"><div class="pane-title"><h3>오늘의 10분 독서</h3><span id="timeSlotLabel">현재 시간 · 10 MINUTES</span></div><p class="share-intro" id="timeGreeting">지금 시간에 어울리는 짧은 독서를 골라드려요.</p><div class="quick-chat" id="tenChat" aria-live="polite"><div class="chat-message assistant">오늘은 어떤 독서를 하고 싶나요? 예: 마음을 달래고 싶어, 새로운 자극이 필요해</div></div><div class="chat-compose"><input id="chatInput" type="text" placeholder="오늘의 기분이나 읽고 싶은 분위기" /><button id="chatSend" type="button">추천</button></div><div class="quick-list" id="quickList"></div><div class="reflection-box"><div class="pane-title"><h3>읽고 난 뒤, 한 가지 질문</h3><span id="currentTimeClock">--:-- · REFLECT</span></div><p id="reflectionQuestion">오늘 읽은 문장 중 가장 오래 머문 문장은 무엇이었나요?</p><textarea id="reflectionNote" placeholder="질문에 대한 생각이나 기억하고 싶은 문장을 기록해 보세요."></textarea><div class="reflection-actions"><button id="saveReflection" type="button">기록 저장</button><button id="newQuestion" type="button">다른 질문 보기</button></div></div></div>
       </div>
+    </section>
+
+    <section class="glass project-screen bookclub-screen" id="bookclubScreen" aria-labelledby="bookclubTitle">
+      <div class="section-heading project-heading">
+        <div><span class="eyebrow">SHARED READING</span><h2 id="bookclubTitle">BookClub</h2><p>추천 도서를 함께 모으고, 한 번의 초대 코드로 북클럽과 완독 레이스를 연결해요.</p></div>
+        <span class="step">03 / READING TOGETHER</span>
+      </div>
+      <div id="bookclubGate" class="club-gate">
+        <div class="project-empty-art" aria-hidden="true">✦</div>
+        <h3>로그인하고 함께 읽기를 시작하세요</h3>
+        <p>북클럽과 초대 코드는 로그인 계정에 안전하게 저장됩니다.</p>
+        <div class="club-gate-actions"><button id="clubLoginBtn" class="project-primary" type="button">로그인</button><button id="clubSignupBtn" class="project-ghost" type="button">회원가입</button></div>
+      </div>
+      <div id="bookclubSetup" hidden>
+        <div class="club-setup-grid">
+          <form id="createClubForm" class="club-panel">
+            <span class="club-number">01</span><h3>북클럽 만들기</h3><p>함께 읽을 사람들에게 공유할 모임을 만들어보세요.</p>
+            <label>클럽 이름<input id="clubName" type="text" maxlength="60" placeholder="예: 우리들의 독서모임" required /></label>
+            <label>클럽 설명<input id="clubDescription" type="text" maxlength="240" placeholder="함께 읽고 싶은 책을 나눠요" /></label>
+            <label>나의 닉네임<input id="clubCreateNickname" type="text" maxlength="20" placeholder="북클럽에서 사용할 이름" required /></label>
+            <button class="project-primary" type="submit">북클럽 만들기</button>
+          </form>
+          <form id="joinClubForm" class="club-panel join-club-panel">
+            <span class="club-number">02</span><h3>코드로 참여하기</h3><p>북클럽 코드와 연결된 완독 레이스 코드 모두 사용할 수 있어요.</p>
+            <label>초대 코드<input id="clubCodeInput" type="text" maxlength="6" placeholder="6자리 코드" required /></label>
+            <label>나의 닉네임<input id="clubJoinNickname" type="text" maxlength="20" placeholder="북클럽에서 사용할 이름" required /></label>
+            <button class="project-ghost club-join-submit" type="submit">북클럽 참여하기</button>
+          </form>
+        </div>
+      </div>
+      <div id="bookclubContent" hidden></div>
     </section>
 
     <section class="glass project-screen race-screen" id="raceScreen" aria-labelledby="raceTitle">
@@ -304,12 +335,27 @@
   <dialog id="raceModal">
     <h3>완독 레이스 시작</h3><p id="raceModalBook" class="dialog-copy"></p>
     <label>닉네임<input id="raceNick" type="text" maxlength="12" placeholder="레이스에서 쓸 이름" /></label>
+    <label id="raceClubField" hidden>BookClub과 연결<select id="raceClubSelect"><option value="">연결하지 않음</option></select><small>연결하면 이 레이스 코드로 북클럽에도 참여할 수 있어요.</small></label>
     <div class="dialog-actions"><button class="project-ghost" data-close type="button">취소</button><button id="raceCreateBtn" class="project-primary" type="button">코드 만들기</button></div>
   </dialog>
   <dialog id="quizModal"><div id="quizBody"></div></dialog>
   <dialog id="profileModal">
     <form id="profileForm" method="dialog"><h3>프로필 수정</h3><label>독서가 닉네임<input id="profileName" type="text" maxlength="20" required /></label><label>한 줄 소개<textarea id="profileBio" maxlength="100"></textarea></label><div class="dialog-actions"><button type="button" class="project-ghost" id="profileCancel">취소</button><button type="submit" class="project-primary">저장</button></div></form>
   </dialog>
+  <dialog id="authModal" class="auth-dialog">
+    <form id="authForm">
+      <button id="authClose" class="dialog-close" type="button" aria-label="닫기">×</button>
+      <span class="eyebrow">YOUR ACCOUNT</span><h2 id="authTitle">로그인</h2><p id="authDescription" class="dialog-copy">가입한 이메일과 비밀번호를 입력하세요.</p>
+      <div id="authEmailField"><label>이메일<input id="authEmail" type="email" autocomplete="email" required /></label></div>
+      <div id="authPasswordField"><label>비밀번호<span class="password-input"><input id="authPassword" type="password" minlength="8" autocomplete="current-password" required /><button id="togglePassword" type="button">보기</button></span></label></div>
+      <div id="authConfirmField" hidden><label>비밀번호 확인<input id="authConfirmPassword" type="password" minlength="8" autocomplete="new-password" /></label></div>
+      <button id="forgotPassword" class="auth-text-button" type="button">비밀번호를 잊으셨나요?</button>
+      <p id="authMessage" class="auth-message" hidden></p>
+      <button id="authSubmit" class="project-primary auth-submit" type="submit">로그인</button>
+      <button id="authSwitch" class="project-ghost auth-switch" type="button">처음이라면 회원가입</button>
+    </form>
+  </dialog>
+  <dialog id="clubActionModal" class="club-action-dialog"><div id="clubActionBody"></div></dialog>
   <div class="toast" id="toast"></div>
   <script>
     const $ = (s) => document.querySelector(s);
@@ -339,11 +385,11 @@
       document.body.classList.add('screen-mode');
       document.body.dataset.screen=screen;
       $$('.nav-tab').forEach(x=>x.classList.toggle('active',x.dataset.screen===screen));
-      if(updateHash) history.replaceState(null,'',screen==='records'?'#readingTools':screen==='mypage'?'#myPage':'#'+screen);
+      if(updateHash) history.replaceState(null,'',screen==='records'?'#readingTools':screen==='mypage'?'#myPage':screen==='bookclub'?'#bookclubScreen':'#'+screen);
       window.scrollTo({top:0,behavior:'smooth'});
     }
     $$('.nav-tab').forEach(tab=>tab.addEventListener('click',e=>{ if(tab.dataset.screen){ e.preventDefault(); activateScreen(tab.dataset.screen); } }));
-    const initialHash=location.hash==='#insights'?'insights':location.hash==='#readingTools'?'records':location.hash==='#race'||location.hash==='#raceScreen'?'race':location.hash==='#shelf'||location.hash==='#shelfScreen'?'shelf':location.hash==='#myPage'?'mypage':'taste';
+    const initialHash=location.hash==='#insights'?'insights':location.hash==='#readingTools'?'records':location.hash==='#race'||location.hash==='#raceScreen'?'race':location.hash==='#bookclub'||location.hash==='#bookclubScreen'?'bookclub':location.hash==='#shelf'||location.hash==='#shelfScreen'?'shelf':location.hash==='#myPage'?'mypage':'taste';
     activateScreen(initialHash,false);
     $$('.toggle').forEach(toggle=>toggle.addEventListener('click',()=>{ const on=toggle.classList.toggle('on'); toggle.setAttribute('aria-pressed',String(on)); }));
     $('#timeRange').addEventListener('input', e=>$('#timeValue').textContent=e.target.value+'분');
@@ -383,6 +429,7 @@
     $('#saveLog').addEventListener('click',()=>{ const title=$('#logTitle').value.trim(); if(!title){ toast('책 제목을 입력해 주세요.'); return; } readingLogs.unshift({title,start:$('#logStart').value,end:$('#logEnd').value,rating:logRating||3,review:$('#logReview').value.trim(),quote:$('#logQuote').value.trim()}); localStorage.setItem('nextbook-reading-logs',JSON.stringify(readingLogs)); ['logTitle','logStart','logEnd','logReview','logQuote'].forEach(id=>$('#'+id).value=''); logRating=0; $$('.star').forEach(x=>x.classList.remove('active')); renderLogs(); toast('독서 기록을 저장했어요.'); });
     renderLogs();
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4"></script>
   <script src="/app.js" type="module"></script>
 </body>
 </html>

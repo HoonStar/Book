@@ -18,6 +18,7 @@ const state = {
   pendingBook: null,
   room: null,
   pollTimer: null,
+  pendingTitle: "",
 };
 window.nextbookRecentIds = [];
 
@@ -48,6 +49,7 @@ function showScreen(name) {
 $$(".nav-tab[data-screen]").forEach((tab) => {
   tab.addEventListener("click", () => {
     if (tab.dataset.screen === "race" || tab.dataset.screen === "shelf") refreshRoom();
+    if (tab.dataset.screen === "bookclub") openBookclub();
     if (tab.dataset.screen === "mypage") requestAnimationFrame(updateMyIndicator);
   });
 });
@@ -107,8 +109,10 @@ document.addEventListener("click", (event) => {
   const button = event.target.closest("[data-race-book]");
   if (!button) return;
   state.pendingBook = button.dataset.raceBook;
+  state.pendingTitle = button.dataset.raceTitle;
   $("#raceModalBook").textContent = `《${button.dataset.raceTitle}》 · 30일 완독 목표`;
   $("#raceNick").value = state.nickname;
+  renderRaceClubOptions();
   $("#raceModal").showModal();
 });
 $("[data-close]")?.addEventListener("click", () => $("#raceModal").close());
@@ -126,6 +130,18 @@ $("#raceCreateBtn")?.addEventListener("click", async () => {
       }),
     });
     saveRoom(code, nickname);
+    const selectedClubId = $("#raceClubSelect")?.value;
+    if (selectedClubId && clubState.user) {
+      try {
+        await clubApi("/api/bookclub", {
+          method: "POST",
+          body: JSON.stringify({ action: "link_race", clubId: selectedClubId, raceCode: code }),
+        });
+        await loadBookclubs(selectedClubId);
+      } catch (error) {
+        toast(`레이스는 만들었지만 BookClub 연결은 실패했어요: ${error.message}`);
+      }
+    }
     $("#raceModal").close();
     showScreen("race");
     toast(`레이스를 만들었어요. 초대 코드는 ${code}입니다.`);
@@ -144,6 +160,17 @@ $("#joinBtn")?.addEventListener("click", async () => {
       body: JSON.stringify({ action: "join", code, nickname, deviceId: state.deviceId }),
     });
     saveRoom(code, nickname);
+    if (clubState.user) {
+      try {
+        await clubApi("/api/bookclub", {
+          method: "POST",
+          body: JSON.stringify({ action: "join", code, nickname }),
+        });
+        await loadBookclubs();
+      } catch {
+        // 북클럽에 연결되지 않은 일반 레이스 코드는 그대로 레이스에서만 사용합니다.
+      }
+    }
     toast("완독 레이스에 참여했어요.");
     refreshRoom();
   } catch (error) {
@@ -556,6 +583,8 @@ if (recommendations) {
       title: $("h3", card)?.textContent.trim(),
       author: $(".author", card)?.textContent.trim(),
       tags: $$(".book-tags .chip", card).map((tag) => tag.textContent.trim()),
+      bookId: $("[data-race-book]", card)?.dataset.raceBook || "",
+      raceReady: Boolean($("[data-race-book]", card)),
       saved: true,
     })).filter((book) => book.title);
     if (!books.length) return;
@@ -564,6 +593,7 @@ if (recommendations) {
     myState.books = [...existing.values()].slice(0, 12);
     writeStored("nextbookSavedBooks", myState.books);
     renderSavedBooks();
+    decorateRecommendationCards();
   }).observe(recommendations, { childList: true });
 }
 
@@ -575,3 +605,511 @@ renderProfile();
 updateMyIndicator();
 if (state.roomCode) refreshRoom();
 else renderRaceEmpty();
+
+
+// Supabase Auth + BookClub
+const SUPABASE_URL = "https://kuupzmckvygidtaqelvp.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_ccnOFv5ihZCo93LkdblhXw_9WBqUKAv";
+const authClient = window.supabase?.createClient
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
+  : null;
+const clubState = {
+  user: null,
+  session: null,
+  clubs: [],
+  activeId: null,
+  detail: null,
+  tab: "books",
+  authMode: "login",
+};
+
+function showAuthMessage(message, type = "info") {
+  const node = $("#authMessage");
+  node.textContent = message;
+  node.classList.toggle("error", type === "error");
+  node.hidden = false;
+}
+
+function setAuthMode(mode) {
+  clubState.authMode = mode;
+  const signup = mode === "signup";
+  const forgot = mode === "forgot";
+  const recovery = mode === "recovery";
+  $("#authTitle").textContent = signup ? "회원가입" : forgot ? "비밀번호 찾기" : recovery ? "새 비밀번호 설정" : "로그인";
+  $("#authDescription").textContent = signup
+    ? "이메일과 비밀번호만으로 바로 시작할 수 있어요."
+    : forgot
+      ? "가입한 이메일로 비밀번호 재설정 링크를 보내드려요."
+      : recovery
+        ? "앞으로 사용할 새 비밀번호를 입력해 주세요."
+        : "가입한 이메일과 비밀번호를 입력하세요.";
+  $("#authEmailField").hidden = recovery;
+  $("#authPasswordField").hidden = forgot;
+  $("#authConfirmField").hidden = !(signup || recovery);
+  $("#forgotPassword").hidden = mode !== "login";
+  $("#authSubmit").textContent = signup ? "회원가입" : forgot ? "재설정 메일 보내기" : recovery ? "비밀번호 변경" : "로그인";
+  $("#authSwitch").textContent = mode === "login" ? "처음이라면 회원가입" : "로그인으로 돌아가기";
+  $("#authSwitch").hidden = recovery;
+  $("#authEmail").required = !recovery;
+  $("#authPassword").required = !forgot;
+  $("#authConfirmPassword").required = signup || recovery;
+  $("#authPassword").autocomplete = signup || recovery ? "new-password" : "current-password";
+  $("#authMessage").hidden = true;
+}
+
+function openAuth(mode = "login") {
+  if (!authClient) return toast("로그인 모듈을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.");
+  setAuthMode(mode);
+  $("#authForm").reset();
+  $("#authModal").showModal();
+  setTimeout(() => $(mode === "recovery" ? "#authPassword" : "#authEmail")?.focus(), 30);
+}
+function closeAuth() {
+  $("#authModal").close();
+  $("#authForm").reset();
+  $("#authMessage").hidden = true;
+}
+
+function authValues() {
+  const email = $("#authEmail").value.trim();
+  const password = $("#authPassword").value;
+  const confirmPassword = $("#authConfirmPassword").value;
+  if (clubState.authMode !== "recovery" && !email) {
+    showAuthMessage("이메일을 입력해 주세요.", "error");
+    return null;
+  }
+  if (clubState.authMode !== "forgot" && password.length < 8) {
+    showAuthMessage("비밀번호는 8자 이상 입력해 주세요.", "error");
+    return null;
+  }
+  if ((clubState.authMode === "signup" || clubState.authMode === "recovery") && password !== confirmPassword) {
+    showAuthMessage("비밀번호 확인이 일치하지 않아요.", "error");
+    return null;
+  }
+  return { email, password };
+}
+
+async function submitAuth() {
+  const values = authValues();
+  if (!values) return;
+  const button = $("#authSubmit");
+  button.disabled = true;
+  try {
+    if (clubState.authMode === "login") {
+      const { data, error } = await authClient.auth.signInWithPassword(values);
+      if (error) throw new Error("이메일 또는 비밀번호가 올바르지 않아요.");
+      clubState.user = data.user;
+      clubState.session = data.session;
+      closeAuth();
+      toast("로그인했어요.");
+      await loadBookclubs();
+    } else if (clubState.authMode === "signup") {
+      const { data, error } = await authClient.auth.signUp({
+        ...values,
+        options: { emailRedirectTo: location.origin },
+      });
+      if (error) throw error;
+      if (!data.session) {
+        showAuthMessage("확인 메일을 보냈어요. 이메일 인증 후 로그인해 주세요.");
+      } else {
+        clubState.user = data.user;
+        clubState.session = data.session;
+        closeAuth();
+        toast("회원가입이 완료됐어요.");
+        await loadBookclubs();
+      }
+    } else if (clubState.authMode === "forgot") {
+      const { error } = await authClient.auth.resetPasswordForEmail(values.email, { redirectTo: location.origin });
+      if (error) throw error;
+      showAuthMessage("비밀번호 재설정 메일을 보냈어요.");
+    } else {
+      const { error } = await authClient.auth.updateUser({ password: values.password });
+      if (error) throw error;
+      closeAuth();
+      toast("비밀번호를 변경했어요.");
+    }
+  } catch (error) {
+    const message = String(error.message || "");
+    if (/rate|security/i.test(message)) showAuthMessage("요청이 잠시 제한됐어요. 잠시 후 다시 시도해 주세요.", "error");
+    else if (/already|registered/i.test(message)) showAuthMessage("이미 사용 중인 이메일이에요. 로그인해 주세요.", "error");
+    else showAuthMessage(message || "로그인 처리에 실패했어요.", "error");
+  } finally {
+    button.disabled = false;
+  }
+}
+
+function updateAuthUI() {
+  const loggedIn = Boolean(clubState.user);
+  $("#authButton").textContent = loggedIn ? (clubState.user.email || "내 계정") : "로그인";
+  $("#signupButton").textContent = loggedIn ? "로그아웃" : "회원가입";
+  $("#bookclubGate").hidden = loggedIn;
+  if (!loggedIn) {
+    $("#bookclubSetup").hidden = true;
+    $("#bookclubContent").hidden = true;
+  }
+  const nickname = loggedIn ? (clubState.user.user_metadata?.display_name || clubState.user.email?.split("@")[0] || "") : "";
+  if ($("#clubCreateNickname") && !$("#clubCreateNickname").value) $("#clubCreateNickname").value = nickname;
+  if ($("#clubJoinNickname") && !$("#clubJoinNickname").value) $("#clubJoinNickname").value = nickname;
+  renderRaceClubOptions();
+}
+
+async function clubApi(path, options = {}) {
+  const session = clubState.session || (await authClient?.auth.getSession()).data?.session;
+  if (!session?.access_token) {
+    const error = new Error("로그인이 필요해요.");
+    error.status = 401;
+    throw error;
+  }
+  const response = await fetch(path, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session.access_token}`,
+      ...(options.headers || {}),
+    },
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const error = new Error(data.error || "북클럽 요청에 실패했어요.");
+    error.status = response.status;
+    throw error;
+  }
+  return data;
+}
+
+async function openBookclub() {
+  if (!clubState.user) {
+    openAuth("login");
+    return;
+  }
+  await loadBookclubs(clubState.activeId);
+}
+
+async function loadBookclubs(preferredId = null) {
+  if (!clubState.user) return;
+  try {
+    const { clubs } = await clubApi("/api/bookclub?action=list");
+    clubState.clubs = clubs || [];
+    const ids = clubState.clubs.map((club) => club.id);
+    clubState.activeId = ids.includes(preferredId) ? preferredId : ids.includes(clubState.activeId) ? clubState.activeId : ids[0] || null;
+    if (clubState.activeId) {
+      clubState.detail = await clubApi(`/api/bookclub?action=detail&clubId=${encodeURIComponent(clubState.activeId)}`);
+    } else {
+      clubState.detail = null;
+    }
+    renderBookclub();
+    renderRaceClubOptions();
+  } catch (error) {
+    if (error.status === 401) openAuth("login");
+    else toast(error.message);
+  }
+}
+
+function renderBookclub() {
+  updateAuthUI();
+  if (!clubState.user) return;
+  const hasClubs = clubState.clubs.length > 0;
+  $("#bookclubSetup").hidden = hasClubs;
+  $("#bookclubContent").hidden = !hasClubs;
+  if (!hasClubs) return;
+  const data = clubState.detail;
+  if (!data) return;
+  const { club, books, votes, members, active_race: activeRace } = data;
+  const month = `${new Date().toISOString().slice(0, 7)}-01`;
+  const monthlyVotes = votes.filter((vote) => vote.vote_month === month);
+  const counts = {};
+  monthlyVotes.forEach((vote) => { counts[vote.club_book_id] = (counts[vote.club_book_id] || 0) + 1; });
+  const owner = club.role === "owner";
+
+  $("#bookclubContent").innerHTML = `
+    <div class="club-shell">
+      <aside class="club-sidebar">
+        <div class="club-sidebar-head"><h3>내 BookClub</h3><button class="project-ghost" id="newClubBtn" type="button">+ 새 클럽</button></div>
+        <div class="club-list">${clubState.clubs.map((item) => `
+          <button class="club-item ${item.id === club.id ? "active" : ""}" data-club-select="${item.id}" type="button">
+            <strong>${esc(item.name)}</strong><small>${esc(item.description || "함께 읽는 책 모임")}</small>
+          </button>`).join("")}</div>
+        <div class="club-code-box">
+          <div class="club-code-label">북클럽 초대 코드</div>
+          <div class="club-code-row"><code class="club-code">${club.invite_code}</code><button class="project-ghost" data-copy-club="${club.invite_code}" type="button">복사</button></div>
+          <div class="club-code-help">이 코드로 BookClub에 참여할 수 있어요. 연결된 레이스 코드도 같은 참여 창에서 사용할 수 있습니다.</div>
+        </div>
+        <div class="club-sidebar-actions">
+          <button class="project-ghost" id="clubMembersBtn" type="button">멤버 ${members.length}명</button>
+          ${owner ? '<button class="project-ghost" id="editClubBtn" type="button">수정</button><button class="project-ghost" id="deleteClubBtn" type="button">삭제</button>' : ""}
+        </div>
+      </aside>
+      <div class="club-main">
+        <div class="club-main-head"><div><h3>${esc(club.name)}</h3><p>${esc(club.description || "함께 읽을 책을 골라보세요.")}</p></div><button class="project-primary" id="shareClubBookBtn" type="button">책 공유하기</button></div>
+        ${renderClubRace(activeRace, owner)}
+        <div class="club-tabs"><button class="club-tab ${clubState.tab === "books" ? "active" : ""}" data-club-tab="books" type="button">공유 도서</button><button class="club-tab ${clubState.tab === "vote" ? "active" : ""}" data-club-tab="vote" type="button">이번 달 투표</button></div>
+        <div id="clubTabContent">${clubState.tab === "books" ? clubBookFeed(books, counts) : clubVoteFeed(books, counts, monthlyVotes)}</div>
+      </div>
+    </div>`;
+
+  wireClubDetail();
+}
+
+function renderClubRace(activeRace, owner) {
+  if (activeRace) {
+    return `<article class="club-race-card"><div class="club-race-head"><div><h4>🏁 진행 중인 완독 레이스</h4><p>《${esc(activeRace.book.title)}》 · 목표 ${activeRace.target_days}일</p></div><code class="club-code">${activeRace.code}</code></div><div class="club-race-actions"><button class="project-primary" data-join-club-race="${activeRace.code}" type="button">이 레이스 참여</button><button class="project-ghost" data-copy-club="${activeRace.code}" type="button">레이스 코드 복사</button></div></article>`;
+  }
+  if (owner && state.roomCode) {
+    return `<article class="club-race-card"><div class="club-race-head"><div><h4>현재 레이스를 연결할까요?</h4><p>${state.roomCode} 코드를 이 BookClub에서도 함께 사용합니다.</p></div></div><div class="club-race-actions"><button class="project-primary" id="linkCurrentRaceBtn" type="button">현재 레이스 연결</button></div></article>`;
+  }
+  return `<article class="club-race-card"><div class="club-race-head"><div><h4>아직 연결된 완독 레이스가 없어요</h4><p>추천 도서로 레이스를 만들 때 이 BookClub을 선택할 수 있어요.</p></div></div></article>`;
+}
+
+function clubBookFeed(books, counts) {
+  if (!books.length) return '<div class="club-empty">아직 공유된 도서가 없어요. 첫 책을 공유해 보세요.</div>';
+  return `<div class="club-feed">${books.map((book) => `<article class="club-book"><div class="club-book-head"><div><h4>${esc(book.title)}</h4><div class="author">${esc(book.author)}</div></div><span class="club-vote-count">${counts[book.id] || 0}표</span></div><p class="reason">${esc(book.reason || "함께 읽고 싶은 책으로 공유됐어요.")}</p><div class="club-book-meta"><span>${book.race_ready ? "🏁 레이스 가능" : "함께 읽기 추천"}</span><span>${new Date(book.created_at).toLocaleDateString("ko-KR")}</span></div></article>`).join("")}</div>`;
+}
+
+function clubVoteFeed(books, counts, monthlyVotes) {
+  if (!books.length) return '<div class="club-empty">공유 도서가 있어야 투표할 수 있어요.</div>';
+  const mine = monthlyVotes.find((vote) => vote.mine)?.club_book_id;
+  return `<div class="club-feed">${[...books].sort((a, b) => (counts[b.id] || 0) - (counts[a.id] || 0)).map((book) => `<article class="club-book"><div class="club-book-head"><div><h4>${esc(book.title)}</h4><div class="author">${esc(book.author)}</div></div><strong class="club-vote-count">${counts[book.id] || 0}표</strong></div><button class="project-ghost club-vote-btn" data-vote-book="${book.id}" type="button">${mine === book.id ? "✓ 나의 선택" : mine ? "이 책으로 변경" : "이 책에 투표"}</button></article>`).join("")}</div>`;
+}
+
+function wireClubDetail() {
+  $$("[data-club-select]").forEach((button) => button.addEventListener("click", async () => {
+    clubState.activeId = button.dataset.clubSelect;
+    await loadBookclubs(clubState.activeId);
+  }));
+  $$("[data-club-tab]").forEach((button) => button.addEventListener("click", () => {
+    clubState.tab = button.dataset.clubTab;
+    renderBookclub();
+  }));
+  $$("[data-copy-club]").forEach((button) => button.addEventListener("click", async () => {
+    await navigator.clipboard?.writeText(button.dataset.copyClub);
+    toast("초대 코드를 복사했어요.");
+  }));
+  $$("[data-vote-book]").forEach((button) => button.addEventListener("click", async () => {
+    try {
+      await clubApi("/api/bookclub", { method: "POST", body: JSON.stringify({ action: "vote", clubId: clubState.activeId, clubBookId: button.dataset.voteBook }) });
+      toast("이번 달 투표를 저장했어요.");
+      await loadBookclubs(clubState.activeId);
+    } catch (error) { toast(error.message); }
+  }));
+  $$("[data-join-club-race]").forEach((button) => button.addEventListener("click", () => joinLinkedRace(button.dataset.joinClubRace)));
+  $("#shareClubBookBtn")?.addEventListener("click", () => openShareBookDialog());
+  $("#clubMembersBtn")?.addEventListener("click", showClubMembers);
+  $("#newClubBtn")?.addEventListener("click", () => {
+    $("#bookclubSetup").hidden = false;
+    $("#bookclubContent").hidden = true;
+    $("#clubName").focus();
+  });
+  $("#editClubBtn")?.addEventListener("click", openEditClubDialog);
+  $("#deleteClubBtn")?.addEventListener("click", deleteActiveClub);
+  $("#linkCurrentRaceBtn")?.addEventListener("click", () => linkRaceToClub(clubState.activeId, state.roomCode));
+}
+
+async function joinLinkedRace(code) {
+  const nickname = clubState.detail?.club?.nickname || state.nickname || clubState.user?.email?.split("@")[0] || "독서가";
+  try {
+    await api("/api/room", { method: "POST", body: JSON.stringify({ action: "join", code, nickname, deviceId: state.deviceId }) });
+    saveRoom(code, nickname);
+    await loadBookclubs(clubState.activeId);
+    toast("BookClub의 완독 레이스에 참여했어요.");
+    showScreen("race");
+    refreshRoom();
+  } catch (error) { toast(error.message); }
+}
+
+async function linkRaceToClub(clubId, raceCode) {
+  if (!clubId || !raceCode) return;
+  try {
+    await clubApi("/api/bookclub", { method: "POST", body: JSON.stringify({ action: "link_race", clubId, raceCode }) });
+    toast("완독 레이스와 BookClub을 연결했어요.");
+    await loadBookclubs(clubId);
+  } catch (error) { toast(error.message); }
+}
+
+function openShareBookDialog(preset = {}) {
+  if (!clubState.user) return openAuth("login");
+  if (!clubState.clubs.length) {
+    showScreen("bookclub");
+    renderBookclub();
+    return toast("먼저 BookClub을 만들어 주세요.");
+  }
+  const body = $("#clubActionBody");
+  body.innerHTML = `<form id="shareClubBookForm"><h3>BookClub에 책 공유</h3><p class="dialog-copy">팀원과 함께 읽고 싶은 이유를 남겨보세요.</p><label>공유할 BookClub<select id="shareClubId">${clubState.clubs.map((club) => `<option value="${club.id}" ${club.id === clubState.activeId ? "selected" : ""}>${esc(club.name)}</option>`).join("")}</select></label><label>책 제목<input id="shareClubTitle" type="text" maxlength="120" value="${esc(preset.title || "")}" required /></label><label>저자<input id="shareClubAuthor" type="text" maxlength="120" value="${esc(preset.author || "")}" /></label><label>한 줄평<textarea id="shareClubReason" maxlength="500" placeholder="왜 함께 읽고 싶은가요?">${esc(preset.reason || "")}</textarea></label><div class="dialog-actions"><button class="project-ghost" id="cancelClubAction" type="button">취소</button><button class="project-primary" type="submit">공유하기</button></div></form>`;
+  const form = $("#shareClubBookForm");
+  form.dataset.bookId = preset.bookId || "";
+  form.dataset.raceReady = String(Boolean(preset.raceReady));
+  $("#cancelClubAction").onclick = () => $("#clubActionModal").close();
+  form.onsubmit = async (event) => {
+    event.preventDefault();
+    try {
+      await clubApi("/api/bookclub", {
+        method: "POST",
+        body: JSON.stringify({
+          action: "share_book",
+          clubId: $("#shareClubId").value,
+          title: $("#shareClubTitle").value,
+          author: $("#shareClubAuthor").value,
+          reason: $("#shareClubReason").value,
+          bookId: form.dataset.bookId,
+          raceReady: form.dataset.raceReady === "true",
+        }),
+      });
+      clubState.activeId = $("#shareClubId").value;
+      $("#clubActionModal").close();
+      toast("BookClub에 책을 공유했어요.");
+      await loadBookclubs(clubState.activeId);
+    } catch (error) { toast(error.message); }
+  };
+  $("#clubActionModal").showModal();
+}
+
+function showClubMembers() {
+  const members = clubState.detail?.members || [];
+  $("#clubActionBody").innerHTML = `<h3>${esc(clubState.detail.club.name)} 멤버</h3><div class="club-modal-list">${members.map((member, index) => `<div class="club-member-row"><strong>${member.role === "owner" ? "👑 " : ""}${esc(member.nickname || `멤버 ${index + 1}`)}</strong><span>${member.role === "owner" ? "클럽장" : "멤버"}</span></div>`).join("")}</div><div class="dialog-actions"><button class="project-primary" id="closeClubAction" type="button">닫기</button></div>`;
+  $("#closeClubAction").onclick = () => $("#clubActionModal").close();
+  $("#clubActionModal").showModal();
+}
+
+function openEditClubDialog() {
+  const club = clubState.detail.club;
+  $("#clubActionBody").innerHTML = `<form id="editClubForm"><h3>BookClub 수정</h3><label>클럽 이름<input id="editClubName" type="text" maxlength="60" value="${esc(club.name)}" required /></label><label>클럽 설명<input id="editClubDescription" type="text" maxlength="240" value="${esc(club.description)}" /></label><div class="dialog-actions"><button class="project-ghost" id="cancelClubAction" type="button">취소</button><button class="project-primary" type="submit">저장</button></div></form>`;
+  $("#cancelClubAction").onclick = () => $("#clubActionModal").close();
+  $("#editClubForm").onsubmit = async (event) => {
+    event.preventDefault();
+    try {
+      await clubApi("/api/bookclub", { method: "POST", body: JSON.stringify({ action: "update", clubId: club.id, name: $("#editClubName").value, description: $("#editClubDescription").value }) });
+      $("#clubActionModal").close();
+      toast("BookClub 정보를 수정했어요.");
+      await loadBookclubs(club.id);
+    } catch (error) { toast(error.message); }
+  };
+  $("#clubActionModal").showModal();
+}
+
+async function deleteActiveClub() {
+  const club = clubState.detail.club;
+  if (!confirm(`‘${club.name}’ BookClub을 삭제할까요? 공유 도서와 투표도 함께 삭제됩니다.`)) return;
+  try {
+    await clubApi("/api/bookclub", { method: "POST", body: JSON.stringify({ action: "delete", clubId: club.id }) });
+    clubState.activeId = null;
+    toast("BookClub을 삭제했어요.");
+    await loadBookclubs();
+  } catch (error) { toast(error.message); }
+}
+
+function decorateRecommendationCards() {
+  $$(".book", recommendations).forEach((card) => {
+    if ($(".recommend-club-share", card)) return;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "recommend-club-share";
+    button.textContent = "✦ BookClub에 공유";
+    button.addEventListener("click", () => openShareBookDialog({
+      title: $("h3", card)?.textContent.trim(),
+      author: $(".author", card)?.textContent.trim(),
+      reason: $(".intro", card)?.textContent.trim(),
+      bookId: $("[data-race-book]", card)?.dataset.raceBook || "",
+      raceReady: Boolean($("[data-race-book]", card)),
+    }));
+    card.append(button);
+  });
+}
+
+function renderRaceClubOptions() {
+  const field = $("#raceClubField");
+  const select = $("#raceClubSelect");
+  if (!field || !select) return;
+  const owned = clubState?.clubs?.filter((club) => club.role === "owner") || [];
+  field.hidden = !clubState?.user || !owned.length;
+  select.innerHTML = '<option value="">연결하지 않음</option>' + owned.map((club) => `<option value="${club.id}">${esc(club.name)}</option>`).join("");
+}
+
+$("#createClubForm")?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  try {
+    const { club } = await clubApi("/api/bookclub", {
+      method: "POST",
+      body: JSON.stringify({
+        action: "create",
+        name: $("#clubName").value,
+        description: $("#clubDescription").value,
+        nickname: $("#clubCreateNickname").value,
+      }),
+    });
+    event.target.reset();
+    clubState.activeId = club.id;
+    toast(`BookClub을 만들었어요. 초대 코드는 ${club.invite_code}입니다.`);
+    await loadBookclubs(club.id);
+  } catch (error) { toast(error.message); }
+});
+
+$("#joinClubForm")?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const code = $("#clubCodeInput").value.trim().toUpperCase();
+  const nickname = $("#clubJoinNickname").value.trim();
+  try {
+    const result = await clubApi("/api/bookclub", {
+      method: "POST",
+      body: JSON.stringify({ action: "join", code, nickname }),
+    });
+    clubState.activeId = result.club.id;
+    if (result.matched_by === "race" && result.club.active_race_code) {
+      await joinLinkedRace(result.club.active_race_code);
+    } else {
+      toast("BookClub에 참여했어요.");
+      await loadBookclubs(result.club.id);
+    }
+  } catch (error) { toast(error.message); }
+});
+
+$("#authButton")?.addEventListener("click", () => clubState.user ? showScreen("bookclub") : openAuth("login"));
+$("#signupButton")?.addEventListener("click", async () => {
+  if (clubState.user) {
+    await authClient.auth.signOut();
+    toast("로그아웃했어요.");
+  } else openAuth("signup");
+});
+$("#clubLoginBtn")?.addEventListener("click", () => openAuth("login"));
+$("#clubSignupBtn")?.addEventListener("click", () => openAuth("signup"));
+$("#authClose")?.addEventListener("click", closeAuth);
+$("#authSwitch")?.addEventListener("click", () => setAuthMode(clubState.authMode === "login" ? "signup" : "login"));
+$("#forgotPassword")?.addEventListener("click", () => setAuthMode("forgot"));
+$("#togglePassword")?.addEventListener("click", () => {
+  const visible = $("#authPassword").type === "text";
+  $("#authPassword").type = visible ? "password" : "text";
+  $("#authConfirmPassword").type = visible ? "password" : "text";
+  $("#togglePassword").textContent = visible ? "보기" : "숨기기";
+});
+$("#authForm")?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  await submitAuth();
+});
+
+async function initializeAuth() {
+  if (!authClient) {
+    updateAuthUI();
+    return;
+  }
+  const { data } = await authClient.auth.getSession();
+  clubState.session = data.session;
+  clubState.user = data.session?.user || null;
+  updateAuthUI();
+  authClient.auth.onAuthStateChange((event, session) => {
+    setTimeout(async () => {
+      clubState.session = session;
+      clubState.user = session?.user || null;
+      if (event === "PASSWORD_RECOVERY") openAuth("recovery");
+      updateAuthUI();
+      if (clubState.user) await loadBookclubs(clubState.activeId);
+      else {
+        clubState.clubs = [];
+        clubState.activeId = null;
+        clubState.detail = null;
+        renderBookclub();
+      }
+    }, 0);
+  });
+  if (clubState.user) await loadBookclubs();
+  if (document.body.dataset.screen === "bookclub" && !clubState.user) openAuth("login");
+}
+
+initializeAuth();

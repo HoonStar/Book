@@ -6,6 +6,12 @@ button,input,select,textarea{font-family:inherit}
 .nav-tabs{overflow-x:auto;scrollbar-width:none}
 .nav-tabs::-webkit-scrollbar{display:none}
 .nav-actions{flex-shrink:0}
+.nav-auth,.nav-signup{
+  border-radius:999px;padding:8px 12px;cursor:pointer;white-space:nowrap;font:700 .68rem 'DM Sans',sans-serif
+}
+.nav-auth{border:0;background:transparent;color:var(--muted);max-width:150px;overflow:hidden;text-overflow:ellipsis}
+.nav-signup{border:1px solid var(--line-hi);background:rgba(140,218,255,.09);color:var(--ice)}
+.nav-auth:hover,.nav-signup:hover{color:var(--ice)}
 .muted{color:var(--muted)}
 .recent-search{position:relative}
 .recent-suggestions{
@@ -40,6 +46,7 @@ button,input,select,textarea{font-family:inherit}
 /* 화면 전환 */
 .project-screen{display:none;margin-top:0;padding:28px}
 body.screen-mode[data-screen="race"] .race-screen,
+body.screen-mode[data-screen="bookclub"] .bookclub-screen,
 body.screen-mode[data-screen="shelf"] .shelf-screen{display:block}
 body.screen-mode[data-screen="mypage"] .my-app{display:block}
 .project-heading{padding-bottom:18px;border-bottom:1px solid var(--line)}
@@ -56,6 +63,78 @@ body.screen-mode[data-screen="mypage"] .my-app{display:block}
 .project-pill{
   display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:6px 10px;
   background:rgba(255,255,255,.55);color:var(--muted);font-size:.68rem
+}
+
+/* BookClub */
+.club-gate{padding:64px 20px 42px;text-align:center}
+.club-gate h3{margin:16px 0 8px;font-size:1.12rem}
+.club-gate p{margin:0;color:var(--muted);font-size:.78rem}
+.club-gate-actions{display:flex;justify-content:center;gap:8px;margin-top:20px}
+.club-setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:20px}
+.club-panel{
+  position:relative;padding:23px;border:1px solid var(--line);border-radius:18px;
+  background:rgba(255,255,255,.46);overflow:hidden
+}
+.club-panel:before{
+  content:"";position:absolute;inset:0 auto 0 0;width:3px;
+  background:linear-gradient(180deg,var(--ice),var(--lav))
+}
+.club-panel.join-club-panel:before{background:linear-gradient(180deg,var(--mint),var(--ice))}
+.club-number{position:absolute;right:20px;top:19px;color:rgba(63,141,166,.36);font:700 1.35rem 'Space Grotesk'}
+.club-panel h3{margin:0;font-size:1rem}.club-panel>p{margin:6px 0 17px;color:var(--muted);font-size:.71rem}
+.club-panel label{margin:12px 0 0;color:var(--muted);font-size:.67rem}
+.club-panel input,.club-panel select{
+  width:100%;margin-top:6px;padding:11px 12px;border:1px solid var(--line);border-radius:10px;
+  background:rgba(255,255,255,.72);color:var(--text);font-size:.76rem
+}
+.club-panel .project-primary,.club-join-submit{width:100%;margin-top:17px}
+.club-shell{display:grid;grid-template-columns:270px 1fr;gap:15px;margin-top:20px}
+.club-sidebar,.club-main{
+  padding:20px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.43)
+}
+.club-sidebar-head,.club-main-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.club-sidebar h3,.club-main h3{margin:0;font-size:.95rem}
+.club-list{display:flex;flex-direction:column;gap:7px;margin:15px 0}
+.club-item{
+  width:100%;border:1px solid var(--line);border-radius:11px;padding:11px;text-align:left;
+  background:rgba(255,255,255,.52);color:var(--text);cursor:pointer
+}
+.club-item.active{border-color:var(--line-hi);background:rgba(140,218,255,.12)}
+.club-item strong{display:block;font-size:.73rem}.club-item small{display:block;margin-top:4px;color:var(--muted);font-size:.61rem}
+.club-code-box{margin-top:17px;padding-top:16px;border-top:1px solid var(--line)}
+.club-code-label{color:var(--muted);font-size:.62rem}
+.club-code-row{display:flex;align-items:center;gap:7px;margin:7px 0}
+.club-code{margin-right:auto;color:var(--ice);font:700 1.05rem 'Space Grotesk';letter-spacing:.16em}
+.club-code-help{color:var(--muted);font-size:.6rem;line-height:1.5}
+.club-sidebar-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:13px}
+.club-sidebar-actions .project-ghost{padding:7px 9px;font-size:.62rem}
+.club-main-head p{margin:6px 0 0;color:var(--muted);font-size:.68rem}
+.club-tabs{display:flex;gap:5px;margin:19px 0 14px;border-bottom:1px solid var(--line)}
+.club-tab{
+  border:0;border-bottom:2px solid transparent;padding:9px 11px;color:var(--muted);
+  background:transparent;cursor:pointer;font-size:.68rem;font-weight:700
+}
+.club-tab.active{border-color:var(--ice);color:var(--ice)}
+.club-feed{display:grid;gap:9px}
+.club-book{
+  padding:15px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.52)
+}
+.club-book-head{display:flex;justify-content:space-between;gap:12px}.club-book h4{margin:0;font-size:.8rem}
+.club-book .author{margin-top:3px;color:var(--muted);font-size:.65rem}
+.club-book .reason{margin:10px 0 0;color:var(--muted);font-size:.68rem;line-height:1.55}
+.club-book-meta{display:flex;justify-content:space-between;gap:8px;margin-top:11px;color:var(--muted);font-size:.59rem}
+.club-vote-count{color:var(--lav);font-weight:700}.club-vote-btn{margin-top:10px;padding:7px 10px}
+.club-empty{padding:34px 15px;text-align:center;color:var(--muted);font-size:.72rem}
+.club-race-card{
+  margin-bottom:14px;padding:15px;border:1px solid rgba(77,157,135,.28);border-radius:14px;
+  background:linear-gradient(135deg,rgba(77,157,135,.1),rgba(140,218,255,.08))
+}
+.club-race-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.club-race-card h4{margin:0;font-size:.8rem}.club-race-card p{margin:5px 0 0;color:var(--muted);font-size:.65rem}
+.club-race-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.recommend-club-share{
+  width:100%;margin-top:7px;border:1px solid rgba(146,115,174,.3);border-radius:10px;padding:9px 10px;
+  color:#76558f;background:rgba(146,115,174,.09);font:700 .67rem 'DM Sans';cursor:pointer
 }
 
 /* 레이스 */
@@ -150,9 +229,10 @@ dialog{
 dialog::backdrop{background:rgba(38,50,61,.42);backdrop-filter:blur(5px)}
 dialog h3{font-size:1.15rem}
 dialog label{display:block;margin-top:14px;color:var(--muted);font-size:.71rem;font-weight:700}
-dialog input,dialog textarea{
+dialog input,dialog textarea,dialog select{
   width:100%;margin-top:6px;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--text)
 }
+dialog label small{display:block;margin-top:6px;color:var(--muted);font-weight:400;line-height:1.45}
 .dialog-copy{margin:8px 0;color:var(--muted);font-size:.78rem}
 .dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
 .q-block{margin-top:15px;padding-top:14px;border-top:1px solid var(--line)}
@@ -165,6 +245,27 @@ dialog input,dialog textarea{
   border-radius:50%;color:var(--mint);font:700 1.2rem 'Space Grotesk';transform:rotate(-7deg)
 }
 .big-stamp.fail{border-color:var(--danger);color:var(--danger)}
+
+/* 로그인 */
+.auth-dialog{width:min(92vw,430px);padding:28px}
+.auth-dialog form{position:relative}
+.auth-dialog .eyebrow{font-size:.65rem}.auth-dialog h2{margin:12px 0 7px;font-size:1.75rem}
+.dialog-close{
+  position:absolute;right:-6px;top:-8px;width:32px;height:32px;border:0;border-radius:50%;
+  background:transparent;color:var(--muted);font-size:1.25rem;cursor:pointer
+}
+.password-input{position:relative;display:block}
+.password-input input{padding-right:58px}
+.password-input button{
+  position:absolute;right:7px;top:13px;border:0;background:transparent;color:var(--muted);
+  padding:7px;cursor:pointer;font-size:.67rem
+}
+.auth-text-button{display:block;margin:8px 0 0 auto;border:0;background:transparent;color:var(--lav);font-size:.65rem;cursor:pointer}
+.auth-message{margin:12px 0 0;padding:10px 11px;border-radius:9px;color:var(--ice);background:rgba(140,218,255,.1);font-size:.68rem;line-height:1.5}
+.auth-message.error{color:var(--danger);background:rgba(199,101,101,.09)}
+.auth-submit,.auth-switch{width:100%;margin-top:13px}.auth-switch{margin-top:8px}
+.club-action-dialog{width:min(92vw,470px)}
+.club-modal-list{display:grid;gap:8px;margin-top:13px}.club-member-row{display:flex;justify-content:space-between;gap:12px;padding:10px;border-bottom:1px solid var(--line);font-size:.7rem}
 
 /* 마이페이지 */
 .my-page.my-app{padding:28px}
@@ -287,12 +388,14 @@ dialog input,dialog textarea{
   .nav-tab{height:43px}
   main{padding-top:82px}
   .project-screen,.my-page.my-app{padding:19px;border-radius:18px}
+  .club-shell,.club-setup-grid{grid-template-columns:1fr}
   .join-row{grid-template-columns:1fr 1fr}.join-row .project-primary{grid-column:1/-1}
   .my-stats-grid,.taste-grid{grid-template-columns:1fr}
   .my-settings{grid-template-columns:1fr}
   .saved-book-grid{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:560px){
+  .nav-actions{gap:3px}.nav-auth,.nav-signup{padding:7px 8px;font-size:.6rem}.nav-auth{max-width:72px}
   .project-heading{display:block}
   .project-heading .step{display:inline-block;margin-top:10px}
   .race-empty{padding:38px 4px 20px}
@@ -312,4 +415,5 @@ dialog input,dialog textarea{
   .reading-log{grid-template-columns:1fr auto}.reading-log time{grid-column:1/-1}
   .taste-chart-wrap{grid-template-columns:1fr}.donut{margin:0 auto}
   .saved-book-grid{grid-template-columns:1fr 1fr}
+  .club-main-head{display:block}.club-main-head .project-primary{margin-top:11px;width:100%}
 }
