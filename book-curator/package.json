@@ -12,8 +12,6 @@
   },
   "scripts": {
     "test": "node test/smoke.mjs && node test/booksource.test.mjs && node test/bookclub.test.mjs",
-    "preflight": "node scripts/preflight.mjs",
-    "import:books": "node scripts/import-books-json.mjs",
-    "import:aladin": "node scripts/import-aladin.mjs"
+    "preflight": "node scripts/preflight.mjs"
   }
 }

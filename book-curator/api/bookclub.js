@@ -1,6 +1,6 @@
 // /api/bookclub — 로그인 사용자 전용 북클럽·투표·완독 레이스 연결 API
 import { createClient } from "@supabase/supabase-js";
-import { bookById } from "../lib/engine.js";
+import { resolveKakaoBookId } from "../lib/booksource.js";
 
 const URL = process.env.SUPABASE_URL;
 const SECRET = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -102,11 +102,11 @@ async function detail(clubId, user) {
       .eq("code", club.active_race_code)
       .maybeSingle();
     if (room) {
-      const book = bookById(room.book_id);
+      const book = await resolveKakaoBookId(room.book_id);
       activeRace = {
         code: room.code,
         target_days: room.target_days,
-        book: book ? { id: book.id, title: book.title, author: book.author, pages: book.pages } : { id: room.book_id, title: room.book_id },
+        book: book ? { id: book.id, title: book.title, author: book.author, isbn: book.isbn, cover: book.cover } : { id: room.book_id, title: "이전 레이스 도서" },
       };
     }
   }
@@ -211,10 +211,12 @@ async function joinClub(body, user, res) {
 async function shareBook(body, user, res) {
   const clubId = clean(body.clubId, 80);
   if (!await requireMember(clubId, user.id, res)) return;
-  const title = clean(body.title, 120);
-  const author = clean(body.author, 120);
+  const selectedBook = await resolveKakaoBookId(clean(body.bookId, 80));
+  if (!selectedBook) return bad(res, "카카오 도서 검색에서 책을 선택해 주세요.");
+  const title = clean(selectedBook.title, 120);
+  const author = clean(selectedBook.author, 120);
   const reason = clean(body.reason, 500);
-  const bookId = clean(body.bookId, 40) || null;
+  const bookId = clean(selectedBook.id, 80);
   const idempotencyKey = requestKey(body.requestKey);
   if (body.requestKey && !idempotencyKey) return bad(res, "요청 식별값이 올바르지 않아요.");
   if (!title) return bad(res, "책 제목을 입력해 주세요.");
@@ -225,7 +227,7 @@ async function shareBook(body, user, res) {
     title,
     author,
     reason,
-    race_ready: Boolean(body.raceReady),
+    race_ready: Boolean(selectedBook.isbn),
     request_key: idempotencyKey,
   }).select("id,club_id,book_id,title,author,reason,race_ready,created_at").single();
   if (error?.code === "23505" && idempotencyKey) {

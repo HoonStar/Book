@@ -1,77 +1,64 @@
-# 배포 가이드 (Vercel + Supabase)
+# 배포 가이드 — Vercel + Supabase + 카카오
 
-허니스낵 때와 같은 조합입니다. 순서대로 따라 하면 배포 URL까지 15~20분.
+## 1. 키 보안
 
-## 0. ⚠️ API 키 보안 규칙 (반드시 먼저)
+- 실제 키는 로컬 `.env`와 Vercel Environment Variables에만 저장합니다.
+- `.env`, `password.txt`는 `.gitignore`에 포함되어야 합니다.
+- 키를 채팅·문서·코드에 공개했다면 해당 서비스에서 폐기하고 새 키를 발급합니다.
+- 커밋 전 `npm run preflight`를 실행합니다.
 
-1. **채팅·문서·코드에 키를 붙여넣었다면 그 키는 노출된 것입니다.**
-   → platform.openai.com → API keys → 해당 키 **Revoke(폐기)** → 새 키 발급.
-2. 키는 오직 두 곳에만 존재해야 합니다: **내 로컬 `.env` 파일**(git 제외됨)과 **Vercel 환경변수**.
-3. 이 저장소의 `.gitignore`가 `.env`를 이미 제외하고 있습니다. `git status`에 `.env`가 보이면 커밋 금지.
-4. 경진대회에 코드를 제출하기 전, 아래를 실행해 키가 없는지 최종 확인:
-   ```powershell
-   Select-String -Path .\* -Pattern "sk-" -Recurse -Exclude node_modules
-   ```
-   결과가 `.env.example`의 안내 문구뿐이어야 정상입니다.
+## 2. Supabase
 
-## 1. Supabase (영구 저장소)
+1. Supabase 프로젝트의 SQL Editor를 엽니다.
+2. `supabase_setup.sql` 내용을 붙여넣고 Run을 누릅니다.
+3. Project URL과 서버용 Secret key를 확인합니다.
+4. Vercel 환경변수에 등록합니다.
 
-1. supabase.com → New project 생성 (리전: Northeast Asia 권장)
-2. SQL Editor → 이 저장소의 `supabase_setup.sql` 내용 붙여넣기 → **Run**
-3. 프로젝트 화면의 **Connect** 또는 Settings → API Keys에서 두 값을 복사해 둡니다:
-   - `Project URL` → `SUPABASE_URL`
-   - `Secret key`(`sb_secret_...`) → `SUPABASE_SECRET_KEY`
-
-> Secret key는 OpenAI 키와 동일한 보안 규칙을 적용하세요. 서버(Vercel 함수)에서만 사용되며, 프런트엔드 코드에는 절대 들어가지 않습니다. 기존 Supabase 프로젝트에서 Secret key를 만들 수 없다면 legacy `service_role` 키를 `SUPABASE_SERVICE_ROLE_KEY` 이름으로 등록해도 됩니다.
-
-## 2. GitHub에 올리기
-
-```powershell
-cd book-curator
-git init
-git add .
-git commit -m "완독 레이스 v1.0"
-# GitHub에서 빈 저장소(private 권장) 만든 뒤:
-git remote add origin https://github.com/<아이디>/book-curator.git
-git push -u origin main
-```
-
-## 3. Vercel 배포
-
-1. vercel.com → **Add New → Project** → 방금 올린 저장소 Import
-2. Framework Preset: **Other** (그대로 두면 됨)
-3. **Environment Variables**에 3개 등록:
-
-   | Name | Value |
+   | 이름 | 값 |
    |---|---|
-   | `OPENAI_API_KEY` | 새로 발급한 키 |
-   | `SUPABASE_URL` | 1-3에서 복사한 URL |
-   | `SUPABASE_SECRET_KEY` | 1-3에서 복사한 `sb_secret_...` 키 |
+   | `SUPABASE_URL` | Supabase Project URL |
+   | `SUPABASE_SECRET_KEY` | `sb_secret_...` 서버 키 |
 
-   (선택 — 도서 API 연동 시, API_INTEGRATION.md 참고)
+브라우저는 DB에 직접 접근하지 않으며 Vercel 서버 함수만 서버 키를 사용합니다. 기존 프로젝트에서는 `SUPABASE_SERVICE_ROLE_KEY`도 호환됩니다.
 
-   | `BOOK_SOURCE` | `kakao` 또는 `aladin` |
-   | `KAKAO_REST_API_KEY` / `ALADIN_TTB_KEY` | 발급받은 키 |
+## 3. 카카오 도서 API
 
-4. **Deploy** → 완료되면 `https://book-curator-xxx.vercel.app` 형태의 URL이 나옵니다. 이것이 제출용 배포 URL.
+Kakao Developers에서 확인한 REST API 키를 Vercel에 등록합니다.
 
-## 4. 배포 확인 체크리스트
+| 이름 | 값 |
+|---|---|
+| `KAKAO_REST_API_KEY` | 카카오 애플리케이션의 REST API 키 |
 
-- [ ] `https://배포주소/api/health` 접속 → `{"ok":true,"storage":"supabase","llm":"live",...}` 확인 (여기서 memory/template가 보이면 환경변수 누락)
-- [ ] 추천 탭에서 3권이 나오고, 문구 아래 "기본 문구 모드" 안내가 **없음** (= OpenAI 연동 성공)
-- [ ] 레이스 생성 → 초대 코드 발급
-- [ ] 휴대폰 등 **다른 기기**에서 접속 → 코드로 참여 (Supabase 연동 확인)
-- [ ] 퀴즈 전부 정답 → 도장 애니메이션 / 일부러 오답 → 진도 유지 + 시도 횟수 증가
-- [ ] 노트 작성 → 다른 기기에서 보임
+이 값은 모든 도서 검색·추천·레이스·북클럽 기능에 필수입니다. 추가한 뒤 Production과 Preview를 선택하고 새로 배포합니다.
 
-## 로컬에서 먼저 돌려 보기 (선택)
+## 4. 선택 환경변수
+
+| 이름 | 용도 |
+|---|---|
+| `OPENAI_API_KEY` | 추천 이유 문구 생성. 없어도 기본 문구로 동작 |
+
+## 5. 자동 배포
+
+GitHub 저장소의 배포 브랜치에 push하면 연결된 Vercel 프로젝트가 자동 배포됩니다. Framework Preset은 `Other`를 사용하며 별도 빌드 명령은 필요하지 않습니다.
+
+## 6. 배포 확인 체크리스트
+
+- [ ] `/api/health`에서 `storage: "supabase"`, `book_source: "kakao"`, `kakao_key: "configured"` 확인
+- [ ] 책 자동완성에 카카오 표지·저자 표시
+- [ ] 추천 결과 3권과 출판사 표시
+- [ ] ISBN이 확인된 추천 도서로 레이스 생성 후 6자리 초대 코드 발급
+- [ ] 다른 기기에서 초대 코드로 참여
+- [ ] 질문 없이 슬라이더로 진도율 저장
+- [ ] 북클럽에서 검색한 카카오 도서 공유
+- [ ] 글·댓글·노트가 다른 기기에서도 표시
+
+## 로컬 실행
 
 ```powershell
 npm install
-npm test                    # 자동 검증 32케이스
-npm install -g vercel
-vercel dev                  # http://localhost:3000
+npm test
+npm run preflight
+vercel dev
 ```
 
-`.env` 없이 실행하면: 저장은 메모리(재시작 시 초기화), 문구는 템플릿 모드로 동작합니다.
-로컬에서도 실제 연동을 보려면 `.env.example`을 복사해 `.env`를 만들고 값을 채우세요.
+`.env.example`을 `.env`로 복사해 값을 채웁니다. 카카오 키가 없으면 도서 기능은 로컬 목록으로 대체되지 않고 설정 오류를 안내합니다.

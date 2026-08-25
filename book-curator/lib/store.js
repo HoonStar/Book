@@ -64,18 +64,15 @@ export async function getMember(code, deviceId) {
   return mem.members.find((x) => x.room_code === code && x.device_id === deviceId) || null;
 }
 
-export async function updateProgress(code, deviceId, pct, passed) {
+export async function updateProgress(code, deviceId, pct) {
   if (supa) {
     const m = await getMember(code, deviceId);
     if (!m) return;
-    const patch = { attempts: (m.attempts || 0) + 1 };
-    if (passed) patch.verified_pct = pct;
-    await supa.from("members").update(patch).eq("id", m.id);
+    await supa.from("members").update({ verified_pct: pct }).eq("id", m.id);
   } else {
     const m = mem.members.find((x) => x.room_code === code && x.device_id === deviceId);
     if (!m) return;
-    m.attempts += 1;
-    if (passed) m.verified_pct = pct;
+    m.verified_pct = pct;
   }
 }
 

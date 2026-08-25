@@ -1,4 +1,4 @@
-// NextBook 프로젝트 고유 기능: 도서 DB 검색, 검증형 완독 레이스, 공유 서재, 나의 페이지
+// NextBook 프로젝트 고유 기능: 카카오 도서 검색, 완독 레이스, 공유 서재, 나의 페이지
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({
@@ -20,8 +20,7 @@ const state = {
   pollTimer: null,
   pendingTitle: "",
 };
-window.nextbookRecentIds = [];
-window.nextbookExternalBooks = [];
+window.nextbookRecentBooks = [];
 
 function toast(message) {
   const node = $("#toast");
@@ -42,6 +41,16 @@ async function api(path, options = {}) {
   return data;
 }
 
+async function findKakaoBook(query) {
+  const text = String(query || "").trim();
+  if (!text) return null;
+  const { results = [] } = await api(`/api/books?q=${encodeURIComponent(text)}`);
+  const normalized = text.toLowerCase().replace(/\s+/g, "");
+  return results.find((book) => book.id?.startsWith("kakao:") && book.title.toLowerCase().replace(/\s+/g, "") === normalized)
+    || results.find((book) => book.id?.startsWith("kakao:"))
+    || null;
+}
+
 function showScreen(name) {
   const tab = $(`.nav-tab[data-screen="${name}"]`);
   if (tab) tab.click();
@@ -55,7 +64,7 @@ $$(".nav-tab[data-screen]").forEach((tab) => {
   });
 });
 
-// 도서 DB 자동완성
+// 카카오 도서 API 자동완성
 let searchTimer;
 const recentInput = $("#recentBooks");
 const suggestionBox = $("#recentBookSuggestions");
@@ -68,10 +77,10 @@ recentInput?.addEventListener("input", () => {
   }
   searchTimer = setTimeout(async () => {
     try {
-      const { results = [], source = "local" } = await api(`/api/books?q=${encodeURIComponent(query)}`);
+      const { results = [], source = "kakao" } = await api(`/api/books?q=${encodeURIComponent(query)}`);
       suggestionBox.innerHTML = results.length
-        ? results.slice(0, 8).map((book) => `<button type="button" data-book-id="${esc(book.id || book.externalId || "")}" data-catalog-id="${esc(book.id || "")}" data-book-title="${esc(book.title)}" data-book-author="${esc(book.author || "")}">${book.cover ? `<img class="suggestion-cover" src="${esc(book.cover)}" alt="" loading="lazy" referrerpolicy="no-referrer" />` : '<span class="suggestion-cover suggestion-cover-fallback">✦</span>'}<span class="suggestion-copy"><b>${esc(book.title)}</b><small>${esc(book.author)}${book.publisher ? ` · ${esc(book.publisher)}` : ""}</small></span>${book.hasQuiz ? '<span class="raceable">레이스 가능</span>' : book.external ? '<span class="external-source">카카오 도서</span>' : ""}</button>`).join("")
-        : '<button type="button" disabled><span>검색 결과가 없어요. 입력한 제목은 장르 정보로 반영됩니다.</span></button>';
+        ? results.slice(0, 8).map((book) => `<button type="button" data-book-id="${esc(book.id || book.externalId || "")}" data-book-title="${esc(book.title)}" data-book-author="${esc(book.author || "")}" data-book-isbn="${esc(book.isbn || "")}" data-book-cover="${esc(book.cover || "")}" data-book-publisher="${esc(book.publisher || "")}">${book.cover ? `<img class="suggestion-cover" src="${esc(book.cover)}" alt="" loading="lazy" referrerpolicy="no-referrer" />` : '<span class="suggestion-cover suggestion-cover-fallback">✦</span>'}<span class="suggestion-copy"><b>${esc(book.title)}</b><small>${esc(book.author)}${book.publisher ? ` · ${esc(book.publisher)}` : ""}</small></span><span class="external-source">카카오 도서</span></button>`).join("")
+        : '<button type="button" disabled><span>카카오 도서 검색 결과가 없어요.</span></button>';
       suggestionBox.dataset.source = source;
       suggestionBox.hidden = false;
     } catch {
@@ -84,7 +93,14 @@ suggestionBox?.addEventListener("click", (event) => {
   if (!button) return;
   if (state.selectedBooks.length >= 3) return toast("최근 읽은 책은 3권까지 선택할 수 있어요.");
   if (state.selectedBooks.some((book) => book.id === button.dataset.bookId)) return;
-  state.selectedBooks.push({ id: button.dataset.bookId, catalogId: button.dataset.catalogId, title: button.dataset.bookTitle, author: button.dataset.bookAuthor });
+  state.selectedBooks.push({
+    id: button.dataset.bookId,
+    title: button.dataset.bookTitle,
+    author: button.dataset.bookAuthor,
+    isbn: button.dataset.bookIsbn,
+    cover: button.dataset.bookCover,
+    publisher: button.dataset.bookPublisher,
+  });
   syncSelectedBooks();
   recentInput.value = "";
   suggestionBox.hidden = true;
@@ -99,8 +115,7 @@ function renderSelectedBooks() {
   wrap.innerHTML = state.selectedBooks.map((book, index) => `<button type="button" data-selected-book="${index}">✓ ${esc(book.title)}　×</button>`).join("");
 }
 function syncSelectedBooks() {
-  window.nextbookRecentIds = state.selectedBooks.map((book) => book.catalogId).filter(Boolean);
-  window.nextbookExternalBooks = state.selectedBooks.filter((book) => !book.catalogId).map((book) => ({ title: book.title, author: book.author }));
+  window.nextbookRecentBooks = state.selectedBooks.map((book) => ({ ...book }));
 }
 $("#recentBookChips")?.addEventListener("click", (event) => {
   const button = event.target.closest("[data-selected-book]");
@@ -224,15 +239,14 @@ function renderBoard(data) {
   $("#raceEmpty").hidden = true;
   $("#raceBoard").hidden = false;
   const me = data.members.find((member) => member.is_me);
-  const nextCheckpoint = me && me.verified_pct < 100 ? me.verified_pct + 25 : null;
   $("#raceBoard").innerHTML = `
     <div class="race-head-card">
       <h2>《${esc(data.book.title)}》 완독 레이스</h2>
-      <div class="race-meta">${esc(data.book.author)} · ${data.book.pages}쪽 · 목표 ${data.room.target_days}일 · ${data.members.length}명 참가</div>
+      <div class="race-meta">${esc(data.book.author)}${data.book.publisher ? ` · ${esc(data.book.publisher)}` : ""} · 목표 ${data.room.target_days}일 · ${data.members.length}명 참가</div>
       <div class="code-ticket"><span>초대 코드</span><code>${data.room.code}</code><button class="project-ghost" id="copyCode" type="button">복사</button></div>
-      ${nextCheckpoint
-        ? `<button class="project-primary quiz-cta" id="quizBtn" type="button">📖 ${nextCheckpoint}% 인증 퀴즈 풀기</button>`
-        : me ? '<p class="race-complete">🏆 완독 도장 4개를 모두 획득했어요!</p>' : ""}
+      ${me && me.verified_pct < 100
+        ? `<div class="progress-editor"><label for="progressInput">내 진도 <b id="progressValue">${me.verified_pct}%</b></label><input id="progressInput" type="range" min="0" max="100" step="5" value="${me.verified_pct}" /><button class="project-primary" id="progressSaveBtn" type="button">진도 저장</button></div>`
+        : me ? '<p class="race-complete">🏆 완독을 기록했어요!</p>' : ""}
     </div>
     ${data.members.map((member, index) => memberCard(member, index, data.checkpoints)).join("")}
     <div class="feed-card"><h3>응원 피드</h3>${data.cheers.length
@@ -242,7 +256,20 @@ function renderBoard(data) {
     await navigator.clipboard?.writeText(data.room.code);
     toast("초대 코드를 복사했어요.");
   });
-  $("#quizBtn")?.addEventListener("click", openQuiz);
+  $("#progressInput")?.addEventListener("input", (event) => {
+    $("#progressValue").textContent = `${event.target.value}%`;
+  });
+  $("#progressSaveBtn")?.addEventListener("click", async () => {
+    try {
+      const progress = Number($("#progressInput").value);
+      const result = await api("/api/room", {
+        method: "POST",
+        body: JSON.stringify({ action: "progress", code: state.roomCode, deviceId: state.deviceId, progress }),
+      });
+      toast(result.finished ? "완독을 기록했어요! 🏆" : `진도 ${result.progress}%를 저장했어요.`);
+      refreshRoom();
+    } catch (error) { toast(error.message); }
+  });
   $$("[data-cheer]").forEach((button) => {
     button.addEventListener("click", () => sendCheer(button.dataset.cheer, button.dataset.emoji));
   });
@@ -252,7 +279,7 @@ function memberCard(member, rank, checkpoints) {
   return `<div class="member-card">
     <div class="member-top">
       <span class="member-name">${rank === 0 && member.verified_pct > 0 ? "👑 " : ""}${esc(member.nickname)}${member.is_me ? '<span class="me">나</span>' : ""}</span>
-      <span class="member-att">검증 ${member.verified_pct}% · 시도 ${member.attempts}회</span>
+      <span class="member-att">진도 ${member.verified_pct}%</span>
     </div>
     <div class="progress"><i style="width:${member.verified_pct}%"></i></div>
     <div class="stamps">${checkpoints.map((checkpoint) => `<span class="race-stamp ${member.verified_pct >= checkpoint ? "hit" : ""}">${checkpoint}</span>`).join("")}</div>
@@ -268,52 +295,6 @@ async function sendCheer(toNick, emoji) {
     });
     toast(`${emoji} ${toNick}님에게 응원을 보냈어요.`);
     refreshRoom();
-  } catch (error) {
-    toast(error.message);
-  }
-}
-
-async function openQuiz() {
-  try {
-    const quiz = await api(`/api/quiz?code=${encodeURIComponent(state.roomCode)}&device=${encodeURIComponent(state.deviceId)}`);
-    if (quiz.done) return toast("이미 완독 인증을 마쳤어요.");
-    $("#quizBody").innerHTML = `
-      <h3>${quiz.checkpoint}% 인증 퀴즈</h3>
-      <p class="dialog-copy">《${esc(quiz.book)}》 · 모든 문제를 맞혀야 도장이 찍혀요.</p>
-      ${quiz.questions.map((item, index) => `<div class="q-block"><p>Q${index + 1}. ${esc(item.q)}</p>${item.options.map((option, optionIndex) => `<label class="q-opt"><input type="radio" name="${item.id}" value="${optionIndex}"> ${esc(option)}</label>`).join("")}</div>`).join("")}
-      <div class="dialog-actions"><button class="project-ghost" id="quizCancel" type="button">닫기</button><button class="project-primary" id="quizSubmit" type="button">채점하기</button></div>`;
-    $("#quizModal").showModal();
-    $("#quizCancel").onclick = () => $("#quizModal").close();
-    $("#quizSubmit").onclick = () => submitQuiz(quiz);
-  } catch (error) {
-    toast(error.message);
-  }
-}
-
-async function submitQuiz(quiz) {
-  const answers = quiz.questions.map((item) => {
-    const choice = document.querySelector(`input[name="${item.id}"]:checked`);
-    return { qid: item.id, choice: choice ? Number(choice.value) : -1 };
-  });
-  if (answers.some((answer) => answer.choice < 0)) return toast("모든 문항에 답해 주세요.");
-  try {
-    const result = await api("/api/quiz", {
-      method: "POST",
-      body: JSON.stringify({
-        code: state.roomCode,
-        deviceId: state.deviceId,
-        checkpoint: quiz.checkpoint,
-        answers,
-      }),
-    });
-    $("#quizBody").innerHTML = result.passed
-      ? `<div class="quiz-result"><div class="big-stamp">${quiz.checkpoint}%</div><h3>${result.finished ? `완독 인증! ${result.rank}등으로 결승선 통과 🏆` : "도장을 획득했어요!"}</h3><p class="dialog-copy">${result.correct}/${result.total} 정답</p><div class="dialog-actions"><button class="project-primary" id="quizOk" type="button">레이스 보드로</button></div></div>`
-      : `<div class="quiz-result"><div class="big-stamp fail">✕</div><h3>아직이에요 (${result.correct}/${result.total})</h3><p class="dialog-copy">조금 더 읽고 다시 도전해 보세요.</p><div class="dialog-actions"><button class="project-ghost" id="quizOk" type="button">닫기</button><button class="project-primary" id="quizRetry" type="button">다시 도전</button></div></div>`;
-    $("#quizOk").onclick = () => {
-      $("#quizModal").close();
-      refreshRoom();
-    };
-    $("#quizRetry")?.addEventListener("click", openQuiz);
   } catch (error) {
     toast(error.message);
   }
@@ -375,23 +356,9 @@ function renderShelf(data) {
 const MY_LOG_KEY = "nextbookReadingLogs";
 const MY_PROFILE_KEY = "nextbookProfile";
 const MY_SETTINGS_KEY = "nextbookSettings";
-const DEFAULT_LOGS = [
-  { id: "sample-3", date: "2026-08-19", title: "아몬드", status: "완독", note: "감정을 이해하는 방식이 사람마다 얼마나 다른지 오래 생각하게 된 책." },
-  { id: "sample-2", date: "2026-08-13", title: "코스모스", status: "읽는 중", note: "우주의 크기를 상상할수록 오늘의 고민이 조금 가벼워진다." },
-  { id: "sample-1", date: "2026-08-04", title: "불편한 편의점", status: "완독", note: "평범한 친절이 한 사람의 하루를 바꿀 수 있다는 따뜻한 이야기." },
-];
-const DEFAULT_SAVED_BOOKS = [
-  { title: "삼체", author: "류츠신", tags: ["과학", "몰입"], saved: true },
-  { title: "물고기는 존재하지 않는다", author: "룰루 밀러", tags: ["과학", "에세이"], saved: true },
-  { title: "숨결이 바람 될 때", author: "폴 칼라니티", tags: ["에세이", "감동"], saved: true },
-  { title: "우리가 빛의 속도로 갈 수 없다면", author: "김초엽", tags: ["소설", "사유"], saved: true },
-];
-const TASTE = [
-  { name: "소설", pct: 42, color: "#3f8da6" },
-  { name: "과학", pct: 28, color: "#8cdaff" },
-  { name: "에세이", pct: 18, color: "#9273ae" },
-  { name: "인문", pct: 12, color: "#d5c6a8" },
-];
+const DEFAULT_LOGS = [];
+const DEFAULT_SAVED_BOOKS = [];
+const TASTE_COLORS = ["#3f8da6", "#8cdaff", "#9273ae", "#d5c6a8"];
 const INSIGHTS = [
   [
     ["요즘의 취향", "낯선 세계를 탐험하는 소설과 과학 이야기에 자주 손이 가요."],
@@ -427,10 +394,10 @@ const myState = {
   insightIndex: 0,
   profile: readStored(MY_PROFILE_KEY, { name: "완독 탐험가", bio: "한 권씩, 나만의 속도로 읽어가고 있어요.", streak: 12 }),
   settings: readStored(MY_SETTINGS_KEY, { personalize: true, reminder: false }),
-  books: readStored("nextbookSavedBooks", DEFAULT_SAVED_BOOKS),
+  books: readStored("nextbookKakaoSavedBooks", DEFAULT_SAVED_BOOKS),
 };
 const allLogs = () => [...myState.logs, ...DEFAULT_LOGS].sort((a, b) => String(b.date).localeCompare(String(a.date)));
-const completedBooks = () => Math.max(3, allLogs().filter((log) => log.status === "완독" && !String(log.id).startsWith("sample-")).length);
+const completedBooks = () => allLogs().filter((log) => log.status === "완독").length;
 
 function updateMyIndicator() {
   const nav = $(".my-subtabs");
@@ -501,14 +468,18 @@ $("#myLogDate").value = new Date().toISOString().slice(0, 10);
 $("#myLogNote")?.addEventListener("input", (event) => {
   $("#myLogCharCount").textContent = `${event.target.value.length} / 500`;
 });
-$("#readingLogForm")?.addEventListener("submit", (event) => {
+$("#readingLogForm")?.addEventListener("submit", async (event) => {
   event.preventDefault();
   const date = $("#myLogDate").value;
   const title = $("#myLogTitle").value.trim();
   const note = $("#myLogNote").value.trim();
   const status = $("#myLogStatus").value;
   if (!date || !title || !note) return toast("날짜, 제목, 감상을 모두 입력해 주세요.");
-  myState.logs.unshift({ id: crypto.randomUUID(), date, title, note, status });
+  let book;
+  try { book = await findKakaoBook(title); }
+  catch { return toast("카카오 도서 검색을 확인해 주세요."); }
+  if (!book) return toast("카카오 도서 검색에서 확인되는 책 제목을 입력해 주세요.");
+  myState.logs.unshift({ id: crypto.randomUUID(), date, title: book.title, author: book.author, bookId: book.id, isbn: book.isbn, note, status });
   writeStored(MY_LOG_KEY, myState.logs);
   event.target.reset();
   $("#myLogDate").value = new Date().toISOString().slice(0, 10);
@@ -528,7 +499,19 @@ $$("[data-log-filter]").forEach((button) => {
 });
 
 function renderTaste() {
-  $("#genreBars").innerHTML = TASTE.map((genre) => `<div><div class="genre-bar-head"><span>${genre.name}</span><b>${genre.pct}%</b></div><div class="genre-bar-track"><i style="width:${genre.pct}%;background:${genre.color}"></i></div></div>`).join("");
+  const savedBooks = myState.books.filter((book) => book.saved);
+  const counts = {};
+  savedBooks.flatMap((book) => book.tags || []).forEach((tag) => { counts[tag] = (counts[tag] || 0) + 1; });
+  const total = Object.values(counts).reduce((sum, value) => sum + value, 0);
+  const taste = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([name, count], index) => ({ name, pct: Math.round((count / total) * 100), color: TASTE_COLORS[index] }));
+  const topTaste = taste[0];
+  $("#tasteBookCount").textContent = savedBooks.length;
+  $("#tasteDonut").setAttribute("aria-label", taste.length ? taste.map((item) => `${item.name} ${item.pct}%`).join(", ") : "저장한 카카오 추천이 없습니다");
+  $("#topTasteGenre").textContent = topTaste?.name || "-";
+  $("#topTasteShare").textContent = topTaste ? `저장 추천 태그의 ${topTaste.pct}%` : "저장한 카카오 추천이 없어요";
+  $("#genreBars").innerHTML = taste.length
+    ? taste.map((genre) => `<div><div class="genre-bar-head"><span>${esc(genre.name)}</span><b>${genre.pct}%</b></div><div class="genre-bar-track"><i style="width:${genre.pct}%;background:${genre.color}"></i></div></div>`).join("")
+    : '<div class="my-card"><p class="muted">카카오 추천 도서를 저장하면 취향 지도가 만들어져요.</p></div>';
   const insight = INSIGHTS[myState.insightIndex];
   $("#insightBody").innerHTML = `<div class="insight-list">${insight.map((item) => `<div class="insight-item"><b>${item[0]}</b><span>${item[1]}</span></div>`).join("")}</div>`;
   $("#insightTime").textContent = `마지막 분석 · ${new Date().toLocaleString("ko-KR", { month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" })}`;
@@ -540,12 +523,15 @@ $("#refreshInsight")?.addEventListener("click", () => {
 });
 
 function renderSavedBooks() {
-  $("#savedBookGrid").innerHTML = myState.books.map((book, index) => `<article class="my-card saved-book" ${book.saved ? "" : "hidden"}><button class="save-toggle" data-save-index="${index}" type="button" aria-label="${esc(book.title)} 저장 해제">♥</button><div class="book-cover-art">${esc(book.title)}</div><h4>${esc(book.title)}</h4><p class="author">${esc(book.author)}</p><div class="book-tags">${(book.tags || []).map((tag) => `<span>${esc(tag)}</span>`).join("")}</div></article>`).join("");
+  $("#savedBookGrid").innerHTML = myState.books.some((book) => book.saved)
+    ? myState.books.map((book, index) => `<article class="my-card saved-book" ${book.saved ? "" : "hidden"}><button class="save-toggle" data-save-index="${index}" type="button" aria-label="${esc(book.title)} 저장 해제">♥</button>${book.cover ? `<img class="book-cover-art" src="${esc(book.cover)}" alt="${esc(book.title)} 표지" referrerpolicy="no-referrer" />` : `<div class="book-cover-art">${esc(book.title)}</div>`}<h4>${esc(book.title)}</h4><p class="author">${esc(book.author)}</p><div class="book-tags">${(book.tags || []).map((tag) => `<span>${esc(tag)}</span>`).join("")}</div></article>`).join("")
+    : '<div class="my-card"><p class="muted">아직 저장한 카카오 추천 도서가 없어요.</p></div>';
   $$("[data-save-index]").forEach((button) => {
     button.addEventListener("click", () => {
       myState.books[Number(button.dataset.saveIndex)].saved = false;
-      writeStored("nextbookSavedBooks", myState.books);
+      writeStored("nextbookKakaoSavedBooks", myState.books);
       renderSavedBooks();
+      renderTaste();
       toast("저장한 추천에서 제외했어요.");
     });
   });
@@ -588,6 +574,7 @@ if (recommendations) {
     const books = $$(".book", recommendations).map((card) => ({
       title: $("h3", card)?.textContent.trim(),
       author: $(".author", card)?.textContent.trim(),
+      cover: $(".cover img", card)?.getAttribute("src") || "",
       tags: $$(".book-tags .chip", card).map((tag) => tag.textContent.trim()),
       bookId: $("[data-race-book]", card)?.dataset.raceBook || "",
       raceReady: Boolean($("[data-race-book]", card)),
@@ -597,8 +584,9 @@ if (recommendations) {
     const existing = new Map(myState.books.map((book) => [book.title, book]));
     books.forEach((book) => existing.set(book.title, { ...existing.get(book.title), ...book, saved: true }));
     myState.books = [...existing.values()].slice(0, 12);
-    writeStored("nextbookSavedBooks", myState.books);
+    writeStored("nextbookKakaoSavedBooks", myState.books);
     renderSavedBooks();
+    renderTaste();
     decorateRecommendationCards();
   }).observe(recommendations, { childList: true });
 }
@@ -939,10 +927,35 @@ function openShareBookDialog(preset = {}) {
     return toast("먼저 BookClub을 만들어 주세요.");
   }
   const body = $("#clubActionBody");
-  body.innerHTML = `<form id="shareClubBookForm"><h3>BookClub에 책 공유</h3><p class="dialog-copy">팀원과 함께 읽고 싶은 이유를 남겨보세요.</p><label>공유할 BookClub<select id="shareClubId">${clubState.clubs.map((club) => `<option value="${club.id}" ${club.id === clubState.activeId ? "selected" : ""}>${esc(club.name)}</option>`).join("")}</select></label><label>책 제목<input id="shareClubTitle" type="text" maxlength="120" value="${esc(preset.title || "")}" required /></label><label>저자<input id="shareClubAuthor" type="text" maxlength="120" value="${esc(preset.author || "")}" /></label><label>한 줄평<textarea id="shareClubReason" maxlength="500" placeholder="왜 함께 읽고 싶은가요?">${esc(preset.reason || "")}</textarea></label><div class="dialog-actions"><button class="project-ghost" id="cancelClubAction" type="button">취소</button><button class="project-primary" type="submit">공유하기</button></div></form>`;
+  body.innerHTML = `<form id="shareClubBookForm"><h3>BookClub에 책 공유</h3><p class="dialog-copy">카카오 도서 검색에서 책을 고르고 함께 읽고 싶은 이유를 남겨보세요.</p><label>공유할 BookClub<select id="shareClubId">${clubState.clubs.map((club) => `<option value="${club.id}" ${club.id === clubState.activeId ? "selected" : ""}>${esc(club.name)}</option>`).join("")}</select></label><label>카카오 도서 검색<input id="shareClubTitle" type="text" maxlength="120" value="${esc(preset.title || "")}" autocomplete="off" required /><div id="shareClubSuggestions" class="recent-suggestions" hidden></div></label><label>저자<input id="shareClubAuthor" type="text" maxlength="120" value="${esc(preset.author || "")}" readonly /></label><label>한 줄평<textarea id="shareClubReason" maxlength="500" placeholder="왜 함께 읽고 싶은가요?">${esc(preset.reason || "")}</textarea></label><div class="dialog-actions"><button class="project-ghost" id="cancelClubAction" type="button">취소</button><button class="project-primary" type="submit">공유하기</button></div></form>`;
   const form = $("#shareClubBookForm");
   form.dataset.bookId = preset.bookId || "";
   form.dataset.raceReady = String(Boolean(preset.raceReady));
+  let clubSearchTimer;
+  $("#shareClubTitle").addEventListener("input", () => {
+    delete form.dataset.bookId;
+    $("#shareClubAuthor").value = "";
+    clearTimeout(clubSearchTimer);
+    const query = $("#shareClubTitle").value.trim();
+    if (!query) return ($("#shareClubSuggestions").hidden = true);
+    clubSearchTimer = setTimeout(async () => {
+      try {
+        const { results = [] } = await api(`/api/books?q=${encodeURIComponent(query)}`);
+        const box = $("#shareClubSuggestions");
+        box.innerHTML = results.filter((book) => book.id?.startsWith("kakao:")).slice(0, 6).map((book) => `<button type="button" data-club-kakao-id="${esc(book.id)}" data-title="${esc(book.title)}" data-author="${esc(book.author || "")}"><b>${esc(book.title)}</b><small>${esc(book.author || "")} · 카카오 도서</small></button>`).join("") || '<button type="button" disabled>검색 결과가 없어요.</button>';
+        box.hidden = false;
+      } catch { $("#shareClubSuggestions").hidden = true; }
+    }, 220);
+  });
+  $("#shareClubSuggestions").addEventListener("click", (event) => {
+    const button = event.target.closest("[data-club-kakao-id]");
+    if (!button) return;
+    form.dataset.bookId = button.dataset.clubKakaoId;
+    form.dataset.raceReady = "true";
+    $("#shareClubTitle").value = button.dataset.title;
+    $("#shareClubAuthor").value = button.dataset.author;
+    $("#shareClubSuggestions").hidden = true;
+  });
   $("#cancelClubAction").onclick = () => $("#clubActionModal").close();
   form.onsubmit = async (event) => {
     event.preventDefault();
@@ -953,6 +966,13 @@ function openShareBookDialog(preset = {}) {
     const idempotencyKey = form.dataset.requestKey || newRequestKey();
     form.dataset.requestKey = idempotencyKey;
     try {
+      if (!form.dataset.bookId) {
+        const selected = await findKakaoBook($("#shareClubTitle").value);
+        if (!selected) throw new Error("카카오 도서 검색에서 책을 선택해 주세요.");
+        form.dataset.bookId = selected.id;
+        $("#shareClubTitle").value = selected.title;
+        $("#shareClubAuthor").value = selected.author;
+      }
       await clubApi("/api/bookclub", {
         method: "POST",
         body: JSON.stringify({

@@ -1,72 +1,60 @@
-// test/booksource.test.mjs — 외부 API 어댑터 정규화·병합·폴백 검증 (네트워크 불필요)
-import { normalizeKakao, normalizeAladin, pickIsbn13, mergeExternal, matchCatalog, searchUnified, activeSource } from "../lib/booksource.js";
+import {
+  activeSource,
+  kakaoSearch,
+  normalizeKakao,
+  pickIsbn,
+  pickIsbn13,
+  resolveKakaoBookId,
+  searchUnified,
+} from "../lib/booksource.js";
 
-let pass = 0, fail = 0;
-const ok = (cond, name) => { cond ? pass++ : (fail++, console.error("  ✗", name)); if (cond) console.log("  ✓", name); };
+let pass = 0;
+let fail = 0;
+const ok = (condition, name) => {
+  condition ? pass++ : (fail++, console.error("  ✗", name));
+  if (condition) console.log("  ✓", name);
+};
 
-// 1) 카카오 응답 정규화 (실제 응답 형태의 픽스처)
-{
-  const doc = { title: "아몬드", authors: ["손원평"], isbn: "8954651134 9788954651134", thumbnail: "https://img/almond.jpg", publisher: "창비" };
-  const n = normalizeKakao(doc);
-  ok(n.isbn === "9788954651134" && n.author === "손원평" && n.pages === null, "카카오 정규화: ISBN13 추출·저자 결합·쪽수 null");
-}
+const document = {
+  title: "아몬드",
+  authors: ["손원평"],
+  isbn: "8954651134 9788954651134",
+  thumbnail: "https://img/almond.jpg",
+  publisher: "창비",
+  url: "https://book.example/almond",
+};
+const normalized = normalizeKakao(document);
+ok(normalized.id === "kakao:9788954651134" && normalized.raceReady, "카카오 ISBN을 안정적인 레이스 ID로 변환");
+ok(normalized.author === "손원평" && normalized.cover.includes("almond"), "카카오 저자·표지 정규화");
+ok(pickIsbn("8954651134 9788954651134") === "9788954651134", "ISBN13 우선 추출");
+ok(pickIsbn("8954651134") === "8954651134" && pickIsbn13("8954651134") === null, "ISBN10 호환");
+ok(activeSource() === "kakao", "도서 소스는 항상 카카오");
 
-// 2) 알라딘 응답 정규화
-{
-  const it = { title: "불편한 편의점", author: "김호연 (지은이)", isbn13: "9791161571188", cover: "https://img/store.jpg", publisher: "나무옆의자", subInfo: { itemPage: 268 } };
-  const n = normalizeAladin(it);
-  ok(n.author === "김호연" && n.isbn === "9791161571188" && n.pages === 268, "알라딘 정규화: (지은이) 제거·isbn13·itemPage");
-}
-ok(pickIsbn13("8996991341 9788996991342") === "9788996991342", "ISBN 문자열에서 13자리만 추출");
+const originalFetch = globalThis.fetch;
+let request;
+process.env.KAKAO_REST_API_KEY = "test-rest-key";
+globalThis.fetch = async (url, options) => {
+  request = { url: String(url), options };
+  return { ok: true, json: async () => ({ documents: [document] }) };
+};
 
-// 3) 카탈로그 매칭: 제목+저자 근사 매칭 (ISBN 없이도)
-{
-  const m = matchCatalog({ title: "달러구트 꿈 백화점", author: "이미예" });
-  ok(m?.id === "bk_003", "외부 결과 ↔ 카탈로그 제목·저자 매칭 (bk_003)");
-  const none = matchCatalog({ title: "존재하지 않는 책 제목", author: "아무개" });
-  ok(none === null, "미등록 도서는 매칭 안 됨");
-}
+const searched = await kakaoSearch("아몬드", 8);
+ok(searched[0].id === "kakao:9788954651134", "카카오 검색 결과만 반환");
+ok(request.url.includes("/v3/search/book") && !request.url.includes("target=title"), "통합 검색은 제목·저자 등 전체 필드를 검색");
+ok(request.options.headers.Authorization === "KakaoAK test-rest-key", "카카오 REST 인증 헤더 사용");
 
-// 4) 병합: 카탈로그 매칭이 앞에, 외부 전용은 external 플래그
-{
-  const ext = [
-    { title: "아몬드", author: "손원평", isbn: null, cover: "c1" },
-    { title: "완전히 새로운 외부 책", author: "신간작가", isbn: "9790000000001", cover: "c2" },
-  ];
-  const merged = mergeExternal(ext, [], 8);
-  ok(merged[0].id === "bk_002" && merged[0].hasQuiz === true && merged[0].cover === "c1", "매칭된 외부 결과 → 카탈로그 id·퀴즈 가능·표지 유지");
-  ok(merged[1].external === true && merged[1].isbn === "9790000000001", "미등록 외부 결과 → external 플래그");
-}
+const unified = await searchUnified("아몬드", 8);
+ok(unified.source === "kakao" && unified.results.length === 1, "통합 검색에 로컬 병합·폴백 없음");
 
-// 5) 소스 전환·폴백: 키 없이 kakao 지정 → 로컬 폴백 + 안내
-{
-  ok(activeSource() === "local", "기본 소스는 local");
-  process.env.BOOK_SOURCE = "kakao"; delete process.env.KAKAO_REST_API_KEY;
-  const r = await searchUnified("아몬드", 8);
-  ok(r.source === "local" && r.notice && r.results[0]?.id === "bk_002", "kakao 키 없음 → 로컬 폴백 + notice");
-  process.env.BOOK_SOURCE = "local";
-}
+const resolved = await resolveKakaoBookId("kakao:9788954651134");
+ok(resolved?.title === "아몬드", "레이스 ISBN을 카카오에서 다시 확인");
+ok(await resolveKakaoBookId("bk_002") === null, "이전 로컬 카탈로그 ID를 허용하지 않음");
 
-// 6) 카카오 실연동 계약: 인증 헤더·검색 옵션·응답 병합
-{
-  const originalFetch = globalThis.fetch;
-  let request;
-  process.env.BOOK_SOURCE = "kakao";
-  process.env.KAKAO_REST_API_KEY = "test-rest-key";
-  globalThis.fetch = async (url, options) => {
-    request = { url: String(url), options };
-    return {
-      ok: true,
-      json: async () => ({ documents: [{ title: "새로운 카카오 책", authors: ["테스트 작가"], isbn: "9791234567890", thumbnail: "https://img.test/book.jpg", publisher: "테스트출판" }] }),
-    };
-  };
-  const result = await searchUnified("카카오 책", 8);
-  ok(result.source === "kakao" && result.results[0]?.externalId === "kakao:9791234567890", "카카오 결과를 안정적인 외부 도서 ID로 병합");
-  ok(request.url.includes("/v3/search/book") && request.url.includes("sort=accuracy") && request.options.headers.Authorization === "KakaoAK test-rest-key", "카카오 공식 엔드포인트·인증 헤더 사용");
-  globalThis.fetch = originalFetch;
-  delete process.env.KAKAO_REST_API_KEY;
-  delete process.env.BOOK_SOURCE;
-}
+delete process.env.KAKAO_REST_API_KEY;
+let rejected = false;
+try { await searchUnified("아몬드", 8); } catch { rejected = true; }
+ok(rejected, "카카오 키가 없을 때 로컬 JSON으로 폴백하지 않음");
 
-console.log(`\n결과: ${pass} 통과 / ${fail} 실패`);
+globalThis.fetch = originalFetch;
+console.log(`\n카카오 도서 소스 결과: ${pass} 통과 / ${fail} 실패`);
 process.exit(fail ? 1 : 0);

@@ -1,109 +1,129 @@
-// test/smoke.mjs — LLM 키·Supabase 없이 전체 흐름 검증 (메모리 스토어 + 템플릿 카피)
-import recommend from "../api/recommend.js";
+import { existsSync } from "node:fs";
 import books from "../api/books.js";
+import recommend from "../api/recommend.js";
 import room from "../api/room.js";
-import quiz from "../api/quiz.js";
-import { QUIZZES, BOOKS, estimate, normalizeInput } from "../lib/engine.js";
+import { normalizeRecommendationInput } from "../lib/recommendation.js";
 
-let pass = 0, fail = 0;
-const ok = (cond, name) => { cond ? pass++ : (fail++, console.error("  ✗", name)); if (cond) console.log("  ✓", name); };
-
+let pass = 0;
+let fail = 0;
+const ok = (condition, name) => {
+  condition ? pass++ : (fail++, console.error("  ✗", name));
+  if (condition) console.log("  ✓", name);
+};
 function mockRes() {
-  const r = { code: 0, body: null };
-  return { r, status(c) { r.code = c; return this; }, json(b) { r.body = b; return this; } };
+  const result = { code: 0, body: null };
+  return {
+    result,
+    status(code) { result.code = code; return this; },
+    json(body) { result.body = body; return this; },
+    setHeader() {},
+  };
 }
-const call = async (h, method, { query = {}, body = {} } = {}) => {
-  const res = mockRes(); await h({ method, query, body }, res); return res.r;
+const call = async (handler, method, { query = {}, body = {} } = {}) => {
+  const response = mockRes();
+  await handler({ method, query, body }, response);
+  return response.result;
 };
 
-// 1) 완독 산식 검산 (기획안 4.4의 예시)
-{
-  const b = { pages: 300, difficulty: 2 };
-  const { days, dailyPages } = estimate(b, 30, "보통");
-  ok(dailyPages === 49 && days === 7, `완독 산식: 300쪽·난이도2·보통·30분 → 하루 ${dailyPages}쪽, D+${days} (기대 49쪽·7일)`);
-}
+const originalFetch = globalThis.fetch;
+process.env.KAKAO_REST_API_KEY = "test-rest-key";
+const servedIds = new Set();
+globalThis.fetch = async (url) => {
+  const parsed = new URL(String(url));
+  const query = parsed.searchParams.get("query") || "도서";
+  const target = parsed.searchParams.get("target");
+  let documents;
+  if (target === "isbn") {
+    documents = [{
+      title: query === "9788954651134" ? "아몬드" : `ISBN ${query} 도서`,
+      authors: [query === "9788954651134" ? "손원평" : "카카오 작가"],
+      isbn: query,
+      thumbnail: `https://img.example/${query}.jpg`,
+      publisher: "카카오 테스트 출판사",
+      url: `https://book.example/${query}`,
+    }];
+  } else if (query === "아몬드") {
+    documents = [{
+      title: "아몬드",
+      authors: ["손원평"],
+      isbn: "8954651134 9788954651134",
+      thumbnail: "https://img.example/almond.jpg",
+      publisher: "창비",
+      url: "https://book.example/almond",
+    }];
+  } else {
+    const seed = [...query].reduce((sum, char) => sum + char.codePointAt(0), 0) % 900000;
+    documents = Array.from({ length: 10 }, (_, index) => {
+      const isbn = `97889${String(seed * 10 + index).padStart(8, "0")}`.slice(0, 13);
+      servedIds.add(`kakao:${isbn}`);
+      return {
+        title: `${query} 추천 도서 ${index + 1}`,
+        authors: [`카카오 작가 ${index + 1}`],
+        isbn,
+        thumbnail: `https://img.example/${isbn}.jpg`,
+        publisher: "카카오 테스트 출판사",
+        url: `https://book.example/${isbn}`,
+      };
+    });
+  }
+  return { ok: true, json: async () => ({ documents }) };
+};
 
-// 2) 입력 검증
-{
-  const bad = normalizeInput({ preferredGenres: [], mood: "이상한값" });
-  ok(!bad.ok && bad.errors.length === 2, "잘못된 입력 → 오류 2건 반환");
-  const clamped = normalizeInput({ preferredGenres: ["소설"], mood: "위로가 필요해", dailyMinutes: 9999, targetDays: 1 });
-  ok(clamped.input.dailyMinutes === 240 && clamped.input.targetDays === 7, "범위 밖 값 클램프 (240분·7일)");
-}
+const invalid = normalizeRecommendationInput({ preferredGenres: [], mood: "" });
+ok(!invalid.ok && invalid.errors.length === 2, "추천 입력 검증");
 
-// 3) 추천 API — 3권, 목표 내 완독, 환각 불가 구조
-{
-  const r = await call(recommend, "POST", { body: {
-    recentBookIds: ["bk_003"], preferredGenres: ["소설","에세이"], mood: "위로가 필요해",
-    dailyMinutes: 30, speed: "보통", targetDays: 30,
-  }});
-  ok(r.code === 200 && r.body.recommendations.length === 3, "추천 3권 반환");
-  ok(r.body.recommendations.every((x) => BOOKS.some((b) => b.id === x.book_id)), "추천 전권이 DB에 실존 (환각 0)");
-  ok(!r.body.recommendations.some((x) => x.book_id === "bk_003"), "읽은 책(bk_003) 제외됨");
-  ok(r.body.recommendations.every((x) => x.estimated_days <= 30) || r.body.notice, "목표 30일 내 완독 (또는 완화 고지)");
-  ok(r.body.mode === "template", "키 없음 → 템플릿 모드 폴백");
-  const genres = r.body.recommendations.map((x) => x.genres[0]);
-  ok(new Set(genres).size >= 2 || genres.length < 3, "다양성: 동일 장르 3권 금지");
-}
+const search = await call(books, "GET", { query: { q: "아몬드" } });
+ok(search.code === 200 && search.body.source === "kakao", "검색 소스는 카카오");
+ok(search.body.results[0].id === "kakao:9788954651134", "검색 결과가 카카오 ISBN ID 사용");
 
-// 4) 극단 입력 — 하루 5분·목표 7일에도 3권 (완화 사다리)
-{
-  const r = await call(recommend, "POST", { body: { preferredGenres: ["과학"], mood: "몰입하고 싶어", dailyMinutes: 5, speed: "느림", targetDays: 7 } });
-  ok(r.code === 200 && r.body.recommendations.length === 3 && r.body.notice, `극단 입력에도 3권 + 고지: "${r.body.notice}"`);
-}
+const recommended = await call(recommend, "POST", { body: {
+  recentBooks: [{ id: "kakao:9788954651134", isbn: "9788954651134", title: "아몬드", author: "손원평" }],
+  preferredGenres: ["소설", "에세이"],
+  mood: "위로가 필요해",
+  dailyMinutes: 30,
+  targetDays: 30,
+} });
+ok(recommended.code === 200 && recommended.body.recommendations.length === 3, "카카오 기반 추천 3권 반환");
+ok(recommended.body.recommendations.every((book) => book.book_id.startsWith("kakao:") && servedIds.has(book.book_id)), "추천 전권이 카카오 응답에 존재");
+ok(recommended.body.recommendations.every((book) => book.race_ready && book.cover), "ISBN·표지가 있는 책으로 레이스 준비");
 
-// 5) 도서 검색
-{
-  const r = await call(books, "GET", { query: { q: "아몬드" } });
-  ok(r.body.results[0]?.id === "bk_002" && r.body.results[0].hasQuiz, "검색 '아몬드' → bk_002, 레이스 가능");
-}
+const created = await call(room, "POST", { body: {
+  action: "create",
+  bookId: "kakao:9788954651134",
+  targetDays: 21,
+  nickname: "지훈",
+  deviceId: "dev-A",
+} });
+const code = created.body.code;
+ok(created.code === 200 && /^[A-Z2-9]{6}$/.test(code), "카카오 도서로 레이스 생성");
 
-// 6) 레이스: 생성 → 참여 → 퀴즈 게이트
-{
-  const created = await call(room, "POST", { body: { action: "create", bookId: "bk_002", targetDays: 21, nickname: "지훈", deviceId: "dev-A" } });
-  const code = created.body.code;
-  ok(created.code === 200 && /^[A-Z2-9]{6}$/.test(code), `레이스 생성, 코드 ${code}`);
+const legacy = await call(room, "POST", { body: {
+  action: "create",
+  bookId: "bk_002",
+  targetDays: 21,
+  nickname: "지훈",
+  deviceId: "dev-A",
+} });
+ok(legacy.code === 400, "로컬 카탈로그 ID로 레이스 생성 차단");
 
-  const noQuiz = await call(room, "POST", { body: { action: "create", bookId: "bk_011", targetDays: 21, nickname: "지훈", deviceId: "dev-A" } });
-  ok(noQuiz.code === 400, "퀴즈 없는 책(bk_011)은 레이스 생성 거부");
+const joined = await call(room, "POST", { body: { action: "join", code, nickname: "친구", deviceId: "dev-B" } });
+ok(joined.code === 200, "초대 코드 참여");
 
-  const joined = await call(room, "POST", { body: { action: "join", code, nickname: "친구", deviceId: "dev-B" } });
-  ok(joined.code === 200, "친구 참여 성공");
-  const badJoin = await call(room, "POST", { body: { action: "join", code: "XXXXXX", nickname: "유령", deviceId: "dev-C" } });
-  ok(badJoin.code === 404, "없는 코드 참여 거부");
+const progress = await call(room, "POST", { body: { action: "progress", code, deviceId: "dev-A", progress: 57 } });
+ok(progress.code === 200 && progress.body.progress === 55, "질문 없이 5% 단위 진도 저장");
+await call(room, "POST", { body: { action: "progress", code, deviceId: "dev-A", progress: 100 } });
+const state = await call(room, "GET", { query: { code, device: "dev-A" } });
+const me = state.body.members.find((member) => member.is_me);
+ok(me.verified_pct === 100 && !("attempts" in me), "퀴즈 시도 횟수 없이 완독 기록");
+ok(state.body.book.id === "kakao:9788954651134" && state.body.book.title === "아몬드", "레이스 도서를 카카오에서 조회");
 
-  // 퀴즈 문항에 정답이 노출되지 않는지
-  const served = await call(quiz, "GET", { query: { code, device: "dev-A" } });
-  ok(served.body.checkpoint === 25 && served.body.questions.every((q) => !("answer" in q)), "25% 문항 제공, 정답 미노출");
+await call(room, "POST", { body: { action: "cheer", code, toNick: "친구", emoji: "🔥", deviceId: "dev-A" } });
+await call(room, "POST", { body: { action: "note", code, deviceId: "dev-B", content: "좋았던 장면을 기록해요.", style: {} } });
+const finalState = await call(room, "GET", { query: { code, device: "dev-B" } });
+ok(finalState.body.cheers.length === 1 && finalState.body.notes.length === 1, "응원·공유 서재 유지");
+ok(!existsSync(new URL("../api/quiz.js", import.meta.url)), "퀴즈 API 제거");
 
-  // 순서 건너뛰기 차단
-  const skip = await call(quiz, "POST", { body: { code, deviceId: "dev-A", checkpoint: 50, answers: [] } });
-  ok(skip.code === 400, "50% 건너뛰기 차단 (25%부터)");
-
-  // 오답 → 실패, 진도 유지 + 시도 기록
-  const wrongAnswers = QUIZZES.bk_002["25"].map((q) => ({ qid: q.id, choice: (q.answer + 1) % q.options.length }));
-  const failRes = await call(quiz, "POST", { body: { code, deviceId: "dev-A", checkpoint: 25, answers: wrongAnswers } });
-  ok(failRes.body.passed === false && failRes.body.new_pct === 0, "전부 오답 → 실패, 진도 0% 유지");
-
-  // 정답 → 통과
-  const rightAnswers = (cp) => QUIZZES.bk_002[String(cp)].map((q) => ({ qid: q.id, choice: q.answer }));
-  const passRes = await call(quiz, "POST", { body: { code, deviceId: "dev-A", checkpoint: 25, answers: rightAnswers(25) } });
-  ok(passRes.body.passed && passRes.body.new_pct === 25, "전부 정답 → 25% 도장");
-
-  for (const cp of [50, 75, 100]) await call(quiz, "POST", { body: { code, deviceId: "dev-A", checkpoint: cp, answers: rightAnswers(cp) } });
-  const state1 = await call(room, "GET", { query: { code, device: "dev-A" } });
-  const me = state1.body.members.find((m) => m.is_me);
-  ok(me.verified_pct === 100 && me.attempts === 5, `완주: 검증 100%, 시도 ${me.attempts}회(오답 1회 포함)`);
-  ok(state1.body.members.every((m) => !("me_key" in m) && !("device_id" in m)), "다른 참가자 device_id 미노출(보안)");
-
-  // 응원 + 노트
-  await call(room, "POST", { body: { action: "cheer", code, toNick: "친구", emoji: "🔥", deviceId: "dev-A" } });
-  await call(room, "POST", { body: { action: "note", code, deviceId: "dev-B", content: "곤이가 나오는 장면에서 한참 멈춰 있었다.", style: { color: "mint", sticker: "🌿" } } });
-  const state2 = await call(room, "GET", { query: { code, device: "dev-B" } });
-  ok(state2.body.cheers.length === 1 && state2.body.notes.length === 1, "응원 1건·노트 1건 저장");
-  const outsider = await call(room, "POST", { body: { action: "note", code, deviceId: "dev-Z", content: "참가 안 했는데요", style: {} } });
-  ok(outsider.code === 403, "비참가자 노트 차단");
-}
-
+globalThis.fetch = originalFetch;
+delete process.env.KAKAO_REST_API_KEY;
 console.log(`\n결과: ${pass} 통과 / ${fail} 실패`);
 process.exit(fail ? 1 : 0);

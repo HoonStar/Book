@@ -14,7 +14,7 @@ create table if not exists public.members (
   device_id    text not null,
   nickname     text not null,
   verified_pct int  not null default 0,
-  attempts     int  not null default 0,
+  attempts     int  not null default 0, -- 이전 버전 호환용(현재 앱에서는 사용하지 않음)
   joined_at    timestamptz default now(),
   unique (room_code, device_id)
 );

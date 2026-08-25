@@ -178,7 +178,10 @@ body.screen-mode[data-screen="mypage"] .my-app{display:block}
 }
 .code-ticket span{color:var(--muted);font-size:.68rem}
 .code-ticket code{margin-right:auto;color:var(--ice);font:700 1rem 'Space Grotesk',sans-serif;letter-spacing:.18em}
-.quiz-cta{width:100%;margin-top:12px}
+.progress-editor{display:grid;grid-template-columns:1fr auto;gap:9px;align-items:center;margin-top:14px;padding:13px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.48)}
+.progress-editor label{grid-column:1/-1;display:flex;justify-content:space-between;margin:0;color:var(--muted);font-size:.72rem}
+.progress-editor label b{color:var(--ice)}
+.progress-editor input[type="range"]{width:100%;accent-color:var(--ice)}
 .race-complete{margin-top:13px;color:var(--mint);font-weight:700;font-size:.82rem}
 .member-card{
   padding:17px 18px;margin-bottom:10px;border:1px solid var(--line);border-radius:16px;
@@ -231,7 +234,7 @@ body.screen-mode[data-screen="mypage"] .my-app{display:block}
 .note .who{margin-top:14px;color:var(--muted);font-size:.65rem}
 .bg-paper{background:#fffdf7}.bg-mint{background:#e6f3ec}.bg-butter{background:#fbf2d6}.bg-rose{background:#f8e5e7}
 
-/* 모달과 퀴즈 */
+/* 모달 */
 dialog{
   width:min(92vw,470px);margin:auto;border:1px solid var(--line);border-radius:20px;padding:23px;
   color:var(--text);background:rgba(255,253,247,.98);box-shadow:0 25px 80px rgba(43,53,58,.28)
@@ -245,17 +248,6 @@ dialog input,dialog textarea,dialog select{
 dialog label small{display:block;margin-top:6px;color:var(--muted);font-weight:400;line-height:1.45}
 .dialog-copy{margin:8px 0;color:var(--muted);font-size:.78rem}
 .dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
-.q-block{margin-top:15px;padding-top:14px;border-top:1px solid var(--line)}
-.q-block>p{font-size:.8rem;font-weight:700}
-.q-opt{display:block!important;margin-top:8px!important;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.55);cursor:pointer}
-.q-opt input{width:auto;margin:0 6px 0 0}
-.quiz-result{text-align:center}
-.big-stamp{
-  width:92px;height:92px;display:grid;place-items:center;margin:5px auto 18px;border:3px double var(--mint);
-  border-radius:50%;color:var(--mint);font:700 1.2rem 'Space Grotesk';transform:rotate(-7deg)
-}
-.big-stamp.fail{border-color:var(--danger);color:var(--danger)}
-
 /* 로그인 */
 .auth-dialog{width:min(92vw,430px);padding:28px}
 .auth-dialog form{position:relative}
@@ -381,6 +373,7 @@ dialog label small{display:block;margin-top:6px;color:var(--muted);font-weight:4
   min-height:150px;display:flex;align-items:flex-end;margin-bottom:11px;padding:13px;border-radius:10px;
   color:#fff;background:linear-gradient(145deg,#2e738d,#80609a);font:700 .85rem 'Space Grotesk';line-height:1.35
 }
+img.book-cover-art{display:block;width:100%;height:150px;min-height:0;padding:0;object-fit:cover}
 .saved-book:nth-child(2) .book-cover-art{background:linear-gradient(145deg,#537e70,#9a8060)}
 .saved-book:nth-child(3) .book-cover-art{background:linear-gradient(145deg,#6a7187,#5e8a98)}
 .saved-book:nth-child(4) .book-cover-art{background:linear-gradient(145deg,#805b78,#15565d)}

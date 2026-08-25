@@ -17,12 +17,23 @@ ok(html.includes('id="bookclubScreen"') && html.includes('id="authModal"'), "Boo
 ok(html.includes('id="raceClubSelect"'), "레이스 생성 시 BookClub 연결 선택 제공");
 ok(app.includes('action: "join"') && app.includes("active_race_code"), "초대 코드로 BookClub과 연결 레이스 함께 참여");
 ok(app.includes('action: "link_race"'), "기존 완독 레이스를 BookClub에 연결 가능");
+ok(api.includes("resolveKakaoBookId") && api.includes("카카오 도서 검색에서 책을 선택"), "BookClub 공유 도서를 카카오에서 서버 검증");
+ok(!app.includes("/api/quiz") && !html.includes('id="quizModal"'), "BookClub 연결 레이스에도 퀴즈 UI 없음");
 ok(api.includes("db.auth.getUser(token)"), "서버에서 Supabase access token 검증");
 ok(api.includes("mine: vote.user_id === user.id") && !app.includes("vote.user_id === clubState.user.id"), "투표자 UUID를 브라우저에 노출하지 않음");
 ok(schema.includes("enable row level security") && schema.includes("revoke all on table"), "북클럽 테이블 RLS 및 브라우저 직접 권한 차단");
 ok(schema.includes("club_votes_book_club_idx") && schema.includes("club_book_id, club_id"), "복합 외래키 인덱스 구성");
 ok(schema.includes("book_clubs_owner_request_uidx") && schema.includes("club_books_added_request_uidx"), "생성 요청 중복 방지용 유니크 인덱스 구성");
 ok(api.includes("request_key: idempotencyKey") && app.includes('dataset.submitting === "true"'), "서버 요청키와 버튼 잠금으로 이중 생성 차단");
+const inlineScripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)];
+let inlineSyntaxOk = inlineScripts.length > 0;
+try {
+  inlineScripts.forEach((match) => new Function(match[1]));
+} catch (error) {
+  inlineSyntaxOk = false;
+  console.error("  인라인 스크립트 문법 오류:", error.message);
+}
+ok(inlineSyntaxOk, "메인 화면 인라인 JavaScript 문법 검증");
 
 console.log(`\nBookClub 결과: ${pass} 통과 / ${fail} 실패`);
 process.exit(fail ? 1 : 0);
